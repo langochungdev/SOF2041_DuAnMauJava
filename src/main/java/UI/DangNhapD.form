@@ -35,7 +35,7 @@
                                       <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
                                       <Component id="btnDangNhap" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="btnThoai" min="-2" pref="88" max="-2" attributes="0"/>
+                                      <Component id="btnThoat" min="-2" pref="88" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -47,8 +47,8 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="btnUsername" max="32767" attributes="0"/>
-                                  <Component id="btnPassword" max="32767" attributes="0"/>
+                                  <Component id="txtTK" max="32767" attributes="0"/>
+                                  <Component id="txtMK" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -71,14 +71,14 @@
                   <Group type="102" attributes="0">
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnUsername" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtTK" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnPassword" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtMK" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="btnThoai" max="32767" attributes="0"/>
+                          <Component id="btnThoat" max="32767" attributes="0"/>
                           <Component id="btnDangNhap" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -103,7 +103,7 @@
         <Property name="text" type="java.lang.String" value="T&#xea;n &#x111;&#x103;ng nh&#x1ead;p:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="btnUsername">
+    <Component class="javax.swing.JTextField" name="txtTK">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
@@ -123,7 +123,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDangNhapActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnThoai">
+    <Component class="javax.swing.JButton" name="btnThoat">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/Icon/Exit.png"/>
@@ -133,10 +133,10 @@
         <Property name="verticalTextPosition" type="int" value="3"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnThoaiActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnThoatActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JPasswordField" name="btnPassword">
+    <Component class="javax.swing.JPasswordField" name="txtMK">
     </Component>
   </SubComponents>
 </Form>

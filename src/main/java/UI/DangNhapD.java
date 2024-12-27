@@ -1,5 +1,9 @@
 package UI;
 
+import DAO.NhanVienDAO;
+import Entity.NhanVien;
+import Utils.Auth;
+import Utils.MsgBox;
 import Utils.XImage;
 
 public class DangNhapD extends javax.swing.JDialog{
@@ -14,7 +18,30 @@ public class DangNhapD extends javax.swing.JDialog{
         setIconImage(XImage.getAppIcon());
         setLocationRelativeTo(null);
         setTitle("Login");
+    }
+    
+    NhanVienDAO dao = new NhanVienDAO();
+    void dangNhap(){
+        String MaNV = txtTK.getText();
+        String password = new String(txtMK.getPassword());
+        NhanVien nv = dao.selectById(MaNV);
+        if(nv == null){
+            MsgBox.alert(this, "Sai đăng nhập");
+        }else{
+            if(!nv.getMatKhau().equals(password)){
+                MsgBox.alert(this, "sai mật khẩu");
+            }else{
+                Auth.user = nv;
+                this.dispose();
+            }
+        }
         
+    }
+    
+    void ketThuc(){
+        if(MsgBox.confirm(this, "ban muon ket thuc ung dung?")){
+            System.exit(0);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -23,11 +50,11 @@ public class DangNhapD extends javax.swing.JDialog{
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        btnUsername = new javax.swing.JTextField();
+        txtTK = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         btnDangNhap = new javax.swing.JButton();
-        btnThoai = new javax.swing.JButton();
-        btnPassword = new javax.swing.JPasswordField();
+        btnThoat = new javax.swing.JButton();
+        txtMK = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -48,13 +75,13 @@ public class DangNhapD extends javax.swing.JDialog{
             }
         });
 
-        btnThoai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/Exit.png"))); // NOI18N
-        btnThoai.setText("Thoát");
-        btnThoai.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnThoai.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnThoai.addActionListener(new java.awt.event.ActionListener() {
+        btnThoat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/Exit.png"))); // NOI18N
+        btnThoat.setText("Thoát");
+        btnThoat.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnThoat.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnThoat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnThoaiActionPerformed(evt);
+                btnThoatActionPerformed(evt);
             }
         });
 
@@ -74,7 +101,7 @@ public class DangNhapD extends javax.swing.JDialog{
                                         .addGap(43, 43, 43)
                                         .addComponent(btnDangNhap)
                                         .addGap(18, 18, 18)
-                                        .addComponent(btnThoai, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(btnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -82,8 +109,8 @@ public class DangNhapD extends javax.swing.JDialog{
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnUsername)
-                                    .addComponent(btnPassword))))
+                                    .addComponent(txtTK)
+                                    .addComponent(txtMK))))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -98,14 +125,14 @@ public class DangNhapD extends javax.swing.JDialog{
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtTK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnThoai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnThoat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnDangNhap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())
                     .addComponent(jLabel1)))
@@ -114,12 +141,12 @@ public class DangNhapD extends javax.swing.JDialog{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnThoaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoaiActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_btnThoaiActionPerformed
+    private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
+        ketThuc();
+    }//GEN-LAST:event_btnThoatActionPerformed
 
     private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
-        dispose();
+        dangNhap();
     }//GEN-LAST:event_btnDangNhapActionPerformed
 
     public static void main(String args[]) {
@@ -139,11 +166,11 @@ public class DangNhapD extends javax.swing.JDialog{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDangNhap;
-    private javax.swing.JPasswordField btnPassword;
-    private javax.swing.JButton btnThoai;
-    private javax.swing.JTextField btnUsername;
+    private javax.swing.JButton btnThoat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPasswordField txtMK;
+    private javax.swing.JTextField txtTK;
     // End of variables declaration//GEN-END:variables
 }

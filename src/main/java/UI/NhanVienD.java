@@ -1,12 +1,148 @@
 package UI;
-public class NhanVienD extends javax.swing.JDialog{
 
+import DAO.NhanVienDAO;
+import Entity.NhanVien;
+import Utils.Auth;
+import Utils.MsgBox;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
+public class NhanVienD extends javax.swing.JDialog{
+    NhanVienDAO dao = new NhanVienDAO();
+    int row = 0;
+    
     public NhanVienD(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
         setTitle("Nhân viên");
+        fillTable();
+        updateStatus();
     }
 
+    void fillTable() {
+        DefaultTableModel model = (DefaultTableModel) tbDanhSach.getModel();
+        model.setRowCount(0);
+        try {
+            List<NhanVien> list = dao.selectAll();
+            for (NhanVien nv : list) {
+                Object[] row = {
+                        nv.getMaNV(),
+                        nv.getMatKhau(),
+                        nv.getHoTen(),
+                        nv.isVaiTro() ? "Trưởng phòng" : "Nhân viên"
+                };
+                model.addRow(row);
+            }
+        } catch (Exception e) {
+            MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+
+    void edit() {
+        try {
+            String maNV = (String) tbDanhSach.getValueAt(this.row, 0);
+            NhanVien model = dao.selectById(maNV);
+            if (model != null) {
+                setForm(model);
+                updateStatus();
+                tabs.setSelectedIndex(0);
+            }
+        } catch (Exception e) {
+            MsgBox.alert(this, "Lỗi truy vấn dữ liệu");
+        }
+    }
+
+    void setForm(NhanVien model) {
+        txtMa.setText(model.getMaNV());
+        txtTen.setText(model.getHoTen());
+        txtMK.setText(model.getMatKhau());
+        txtMK2.setText(model.getMatKhau());
+        rdoTruongPhong.setSelected(model.isVaiTro());
+        rdoNhanVien.setSelected(!model.isVaiTro());
+    }
+
+    NhanVien getForm() {
+        NhanVien model = new NhanVien();
+        model.setMaNV(txtMa.getText());
+        model.setHoTen(txtTen.getText());
+        model.setMatKhau(new String(txtMK.getPassword()));
+        model.setVaiTro(rdoTruongPhong.isSelected());
+        return model;
+    }
+
+    void updateStatus() {
+        boolean edit = this.row >= 0;
+        boolean first = this.row == 0;
+        boolean last = this.row == tbDanhSach.getRowCount() - 1;
+        // trang thái form
+        txtMa.setEditable(!edit);
+        btnThem.setEnabled(!edit);
+        btnSua.setEnabled(edit);
+        btnXoa.setEnabled(edit);
+
+        btnFirst.setEnabled(edit && !first);
+        btnPrev.setEnabled(edit && !first);
+        btnNext.setEnabled(edit && !last);
+        btnLast.setEnabled(edit && !last);
+    }
+
+    void clearForm() {
+        this.setForm(new NhanVien());
+        this.updateStatus();
+        row = -1;
+        updateStatus();
+    }
+
+    void insert() {
+        NhanVien model = getForm();
+        String mk2 = new String(txtMK2.getPassword());
+        if (mk2.equals(model.getMatKhau())) {
+            try {
+                dao.insert(model);
+                this.fillTable();
+                this.clearForm();
+                MsgBox.alert(this, "Thêm mới thành công!");
+            } catch (Exception e) {
+                MsgBox.alert(this, "Thêm mới thất bại!");
+            }
+        } else {
+            MsgBox.alert(this, "Xác nhận mật khẩu không đúng!");
+        }
+    }
+
+    void update() {
+        NhanVien model = getForm();
+        String confirm = new String(txtMK2.getPassword());
+        if (!confirm.equals(model.getMatKhau())) {
+            MsgBox.alert(this, "Xác nhận mật khẩu không đúng!");
+        } else {
+            try {
+                dao.update(model);
+                this.fillTable();
+                MsgBox.alert(this, "Cập nhật thành công");
+            } catch (Exception e) {
+                MsgBox.alert(this, "Cập nhật thất bại");
+            }
+        }
+    }
+
+    void delete() {
+        if (!Auth.isManager()) {
+            MsgBox.alert(this, "Bạn không có quyền xoá nhân viên");
+        } else {
+            if (MsgBox.confirm(this, "Bạn thực sự muốn xoá nhân viên này?")) {
+                String manv = txtMa.getText();
+                try {
+                    dao.delete(manv);
+                    this.fillTable();
+                    this.clearForm();
+                    MsgBox.alert(this, "Bạn xoá thành công!");
+                } catch (Exception e) {
+                    MsgBox.alert(this, "Xoá thất bại!");
+                }
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -18,11 +154,11 @@ public class NhanVienD extends javax.swing.JDialog{
         tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         lblMaNV = new javax.swing.JLabel();
-        txtMaNV = new javax.swing.JTextField();
+        txtMa = new javax.swing.JTextField();
         lblMatKhau = new javax.swing.JLabel();
         lblMatKhau2 = new javax.swing.JLabel();
         lblHoTen = new javax.swing.JLabel();
-        txtHoTen = new javax.swing.JTextField();
+        txtTen = new javax.swing.JTextField();
         lblVaiTro = new javax.swing.JLabel();
         rdoTruongPhong = new javax.swing.JRadioButton();
         rdoNhanVien = new javax.swing.JRadioButton();
@@ -34,13 +170,11 @@ public class NhanVienD extends javax.swing.JDialog{
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         btnLast = new javax.swing.JButton();
-        txtMatKhau = new javax.swing.JPasswordField();
-        txtMatKhau2 = new javax.swing.JPasswordField();
+        txtMK = new javax.swing.JPasswordField();
+        txtMK2 = new javax.swing.JPasswordField();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblNhanVien = new javax.swing.JTable();
-
-        setResizable(true);
+        tbDanhSach = new javax.swing.JTable();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 255));
@@ -63,20 +197,60 @@ public class NhanVienD extends javax.swing.JDialog{
         rdoNhanVien.setText("Nhân viên");
 
         btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemActionPerformed(evt);
+            }
+        });
 
         btnSua.setText("Sửa");
+        btnSua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaActionPerformed(evt);
+            }
+        });
 
         btnXoa.setText("Xoá");
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaActionPerformed(evt);
+            }
+        });
 
         btnMoi.setText("Mới");
+        btnMoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoiActionPerformed(evt);
+            }
+        });
 
         btnFirst.setText("|<");
+        btnFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFirstActionPerformed(evt);
+            }
+        });
 
         btnPrev.setText("<<");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
 
         btnNext.setText(">>");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
 
         btnLast.setText(">|");
+        btnLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLastActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -85,7 +259,7 @@ public class NhanVienD extends javax.swing.JDialog{
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTen, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblMaNV)
                     .addComponent(lblMatKhau)
                     .addComponent(lblMatKhau2)
@@ -95,9 +269,9 @@ public class NhanVienD extends javax.swing.JDialog{
                         .addComponent(rdoTruongPhong)
                         .addGap(18, 18, 18)
                         .addComponent(rdoNhanVien))
-                    .addComponent(txtMaNV, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtMatKhau2)
-                    .addComponent(txtMatKhau)
+                    .addComponent(txtMa, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMK2)
+                    .addComponent(txtMK)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnThem)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -122,19 +296,19 @@ public class NhanVienD extends javax.swing.JDialog{
                 .addContainerGap()
                 .addComponent(lblMaNV)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtMaNV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtMa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblMatKhau)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblMatKhau2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtMatKhau2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtMK2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblHoTen)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtTen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblVaiTro)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -158,7 +332,7 @@ public class NhanVienD extends javax.swing.JDialog{
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        tblNhanVien.setModel(new javax.swing.table.DefaultTableModel(
+        tbDanhSach.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -169,7 +343,12 @@ public class NhanVienD extends javax.swing.JDialog{
                 "MÃ NV", "MẬT KHẨU", "HỌ VÀ TÊN", "VAI TRÒ"
             }
         ));
-        jScrollPane1.setViewportView(tblNhanVien);
+        tbDanhSach.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tbDanhSachMousePressed(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbDanhSach);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -215,6 +394,53 @@ public class NhanVienD extends javax.swing.JDialog{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
+        insert();
+    }//GEN-LAST:event_btnThemActionPerformed
+
+    private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
+        update();
+    }//GEN-LAST:event_btnSuaActionPerformed
+
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
+        delete();
+    }//GEN-LAST:event_btnXoaActionPerformed
+
+    private void btnMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoiActionPerformed
+        clearForm();
+    }//GEN-LAST:event_btnMoiActionPerformed
+
+    private void btnFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFirstActionPerformed
+        row = 0;
+        edit();
+    }//GEN-LAST:event_btnFirstActionPerformed
+
+    private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
+        if (row > 0) {
+            row--;
+            edit();
+        }
+    }//GEN-LAST:event_btnPrevActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        if (row < tbDanhSach.getRowCount() - 1) {
+            row++;
+            edit();
+        }
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void btnLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLastActionPerformed
+        row = tbDanhSach.getRowCount() - 1;
+        edit();
+    }//GEN-LAST:event_btnLastActionPerformed
+
+    private void tbDanhSachMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDanhSachMousePressed
+        if (evt.getClickCount() == 2) {
+            this.row = tbDanhSach.rowAtPoint(evt.getPoint());
+            edit();
+        }
+    }//GEN-LAST:event_tbDanhSachMousePressed
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {
@@ -253,10 +479,10 @@ public class NhanVienD extends javax.swing.JDialog{
     private javax.swing.JRadioButton rdoNhanVien;
     private javax.swing.JRadioButton rdoTruongPhong;
     private javax.swing.JTabbedPane tabs;
-    private javax.swing.JTable tblNhanVien;
-    private javax.swing.JTextField txtHoTen;
-    private javax.swing.JTextField txtMaNV;
-    private javax.swing.JPasswordField txtMatKhau;
-    private javax.swing.JPasswordField txtMatKhau2;
+    private javax.swing.JTable tbDanhSach;
+    private javax.swing.JPasswordField txtMK;
+    private javax.swing.JPasswordField txtMK2;
+    private javax.swing.JTextField txtMa;
+    private javax.swing.JTextField txtTen;
     // End of variables declaration//GEN-END:variables
 }

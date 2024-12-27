@@ -13,7 +13,7 @@ public class JdbcHelper {
     public static final String PASSWORD = "0000";
 
     public static Connection getConnection() {
-        String Url = "jdbc:sqlserver://"+ HOSTNAME+ ":"+ PORT+ ";databaseName="+ DBNAME;
+        String Url = "jdbc:sqlserver://"+ HOSTNAME+ ":"+ PORT+ ";databaseName="+ DBNAME+";encrypt=true;trustServerCertificate=true;";
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             return DriverManager.getConnection(Url, USERNAME, PASSWORD);
@@ -41,7 +41,7 @@ public class JdbcHelper {
         }
     }
     
-    public static int execUpdate(String sql, Object...args) {
+    public static int execUpdate(String sql, Object... args) {
         PreparedStatement ps = getPpsm(sql, args);
         try {
             return ps.executeUpdate();

@@ -8,7 +8,7 @@ public class NhanVien {
 
     public NhanVien(){
     }
-    public NhanVien(String maNV, String hoTen, String matKhau, boolean vaiTro) {
+    public NhanVien(String maNV, String matKhau, String hoTen, boolean vaiTro) {
         this.maNV = maNV;
         this.hoTen = hoTen;
         this.matKhau = matKhau;
