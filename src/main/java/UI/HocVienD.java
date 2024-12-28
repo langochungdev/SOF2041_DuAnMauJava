@@ -1,11 +1,151 @@
 package UI;
+import DAO.ChuyenDeDAO;
+import DAO.HocVienDAO;
+import DAO.KhoaHocDAO;
+import DAO.NguoiHocDAO;
+import Entity.ChuyenDe;
+import Entity.HocVien;
+import Entity.KhoaHoc;
+import Entity.NguoiHoc;
+import Utils.Auth;
+import Utils.MsgBox;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 
 public class HocVienD extends javax.swing.JDialog{
-
+    ChuyenDeDAO cdDAO = new ChuyenDeDAO();
+    KhoaHocDAO khDAO = new KhoaHocDAO();
+    NguoiHocDAO nhDAO = new NguoiHocDAO();
+    HocVienDAO hvDAO = new HocVienDAO();
+    
     public HocVienD(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
         setTitle("Học viên");
+        fillComboboxChuyenDe();
+    }
+    
+    void fillComboboxChuyenDe(){
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cboChuyenDe.getModel();
+        model.removeAllElements();
+        try{
+            List<ChuyenDe> list = cdDAO.selectAll();
+            for(ChuyenDe cd : list){
+                model.addElement(cd);
+            }
+            fillComboboxKhoaHoc();
+        }catch(Exception e){
+            MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+
+    void fillComboboxKhoaHoc(){
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cboKhoaHoc.getModel();
+        model.removeAllElements();
+        try{
+            ChuyenDe chuyenDe = (ChuyenDe) cboChuyenDe.getSelectedItem();
+            if(chuyenDe != null){
+                List<KhoaHoc> list = khDAO.selectKhoaHocByMaCD(chuyenDe.getMaCD());
+                for(KhoaHoc khoaHoc : list){
+                    model.addElement(khoaHoc);
+                }
+            }
+            fillTableHocVien();
+        }catch(Exception e){
+            MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+
+    public void fillTableNguoiHoc(){
+        DefaultTableModel model = (DefaultTableModel) tblNguoiHoc.getModel();
+        model.setRowCount(0);
+        try{
+            KhoaHoc kh = (KhoaHoc) cboKhoaHoc.getSelectedItem();
+            if(kh != null){
+                System.out.println("MaKH:" + kh.getMaKH());
+                String keyword = txtTimKiem.getText();
+                List<NguoiHoc> list = nhDAO.selectByKeyword(keyword);
+                for(NguoiHoc nh : list){
+                    Object[] row = {
+                        nh.getMaNH(),
+                        nh.getHoTen(),
+                        nh.getNgaySinh(),
+                        nh.isGioiTinh() ? "Nam" : "Nữ",
+                        nh.getDienThoai(),
+                        nh.getEmail()
+                    };
+                    model.addRow(row);
+                }
+            }
+        }catch(Exception e){
+             MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+    
+    public void fillTableHocVien(){
+        DefaultTableModel model = (DefaultTableModel) tblHocVien.getModel();
+        model.setRowCount(0);
+        try{
+            KhoaHoc kh = (KhoaHoc) cboKhoaHoc.getSelectedItem();
+            if(kh != null){
+                System.out.println("MaKH:" + kh.getMaKH());
+                List<HocVien> list = hvDAO.selectByKhoaHoc(kh.getMaKH());
+                System.out.println("list:"+list.size());
+                for(int i = 0; i<list.size();i++){
+                    HocVien hv = list.get(i);
+                    String hoTen = nhDAO.selectById(hv.getMaNH()).getHoTen();
+                    Object[] row = {
+                        i + 1, hv.getMaHV(),
+                        hv.getMaNH(),
+                        hoTen,
+                        hv.getDiem()
+                };
+                    model.addRow(row);
+                }
+            }
+            fillTableNguoiHoc();
+        }catch(Exception e){
+             MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+    
+    void addHocVien(){
+        KhoaHoc khoaHoc = (KhoaHoc)cboKhoaHoc.getSelectedItem();
+        for(int row : tblNguoiHoc.getSelectedRows()){
+            HocVien hv = new HocVien();
+            hv.setMaKH(khoaHoc.getMaKH());
+            hv.setDiem(0);
+            hv.setMaNH((String)tblNguoiHoc.getValueAt(row, 0));
+            System.out.println("=>"+hv.getMaKH()+"-"+hv.getMaNH()+"-"+hv.getDiem());
+            hvDAO.insert(hv);
+        }
+        fillTableHocVien();
+        tabs.setSelectedIndex(0);
+    }
+    
+    void removeHocVien(){
+        if(!Auth.isManager()){
+            MsgBox.alert(this, "Bạn không đủ quyền để xoá học viên!");
+        }else{
+            if(MsgBox.confirm(this, "Bạn muốn xoá các học viên được chọn!")){
+                for(int row:tblHocVien.getSelectedRows()){
+                    int maHV = (Integer)tblHocVien.getValueAt(row, 1);
+                    hvDAO.delete(maHV);
+                }
+                fillTableHocVien();
+            }
+        }
+    }
+    
+    void updateDiem(){
+        for(int i = 0; i < tblHocVien.getRowCount();i++){
+            int maHV = (Integer)tblHocVien.getValueAt(i, 1);
+            HocVien hocVien = hvDAO.selectById(maHV);
+            hocVien.setDiem(Double.parseDouble(tblHocVien.getValueAt(i, 4).toString()));
+            hvDAO.update(hocVien);
+        }
+        MsgBox.alert(this, "Cập nhật điểm thành công!");
     }
 
 
@@ -30,13 +170,17 @@ public class HocVienD extends javax.swing.JDialog{
         tblNguoiHoc = new javax.swing.JTable();
         btnThemHV = new javax.swing.JButton();
 
-        setResizable(true);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("CHUYÊN ĐỀ");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("KHOÁ HỌC");
+
+        cboChuyenDe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboChuyenDeActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -59,8 +203,18 @@ public class HocVienD extends javax.swing.JDialog{
         jScrollPane2.setViewportView(tblHocVien);
 
         btnSuaDiem.setText("Cập nhật điểm");
+        btnSuaDiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaDiemActionPerformed(evt);
+            }
+        });
 
         btnXoaHV.setText("Xoá khỏi khoá học");
+        btnXoaHV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaHVActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -95,6 +249,12 @@ public class HocVienD extends javax.swing.JDialog{
 
         jLabel3.setText("Tìm kiếm");
 
+        txtTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTimKiemActionPerformed(evt);
+            }
+        });
+
         tblNguoiHoc.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -114,6 +274,11 @@ public class HocVienD extends javax.swing.JDialog{
         jScrollPane1.setViewportView(tblNguoiHoc);
 
         btnThemHV.setText("Thêm vào khoá học");
+        btnThemHV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemHVActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -185,6 +350,26 @@ public class HocVienD extends javax.swing.JDialog{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnXoaHVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaHVActionPerformed
+        removeHocVien();
+    }//GEN-LAST:event_btnXoaHVActionPerformed
+
+    private void btnSuaDiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaDiemActionPerformed
+        updateDiem();
+    }//GEN-LAST:event_btnSuaDiemActionPerformed
+
+    private void btnThemHVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemHVActionPerformed
+        addHocVien();
+    }//GEN-LAST:event_btnThemHVActionPerformed
+
+    private void cboChuyenDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChuyenDeActionPerformed
+        fillComboboxKhoaHoc();
+    }//GEN-LAST:event_cboChuyenDeActionPerformed
+
+    private void txtTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimKiemActionPerformed
+        fillTableNguoiHoc();
+    }//GEN-LAST:event_txtTimKiemActionPerformed
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {

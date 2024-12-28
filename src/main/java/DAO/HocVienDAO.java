@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import Utils.JdbcHelper;
 
-public class HocVienDAO extends EduSysDAO<HocVien, String> {
+public class HocVienDAO extends EduSysDAO<HocVien, Integer> {
     String INSERT_SQL = "INSERT INTO HocVien(MaKH, MaNH, Diem) VALUES(?, ?, ?)";
     String UPDATE_SQL = "UPDATE HocVien SET MaKH=?, MaNH=?, Diem=? WHERE MaHV=?";
     String DELETE_SQL = "DELETE FROM HocVien WHERE MaHV=?";
@@ -15,23 +15,23 @@ public class HocVienDAO extends EduSysDAO<HocVien, String> {
     String SELECT_BY_ID_SQL = "SELECT * FROM HocVien WHERE MaHV=?";
 
     @Override
-    public void insert(HocVien entity) {
-        JdbcHelper.execUpdate(INSERT_SQL, entity.getMaKH(),
-                entity.getMaNH(),
-                entity.getDiem());
+    public void insert(HocVien e) {
+        JdbcHelper.execUpdate(INSERT_SQL, e.getMaKH(),
+                e.getMaNH(),
+                e.getDiem());
     }
 
     @Override
-    public void update(HocVien entity) {
+    public void update(HocVien e) {
         JdbcHelper.execUpdate(UPDATE_SQL,
-                entity.getMaKH(),
-                entity.getMaNH(),
-                entity.getDiem(),
-                entity.getMaHV());
+                e.getMaKH(),
+                e.getMaNH(),
+                e.getDiem(),
+                e.getMaHV());
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Integer id) {
         JdbcHelper.execUpdate(DELETE_SQL, id);
     }
 
@@ -41,7 +41,7 @@ public class HocVienDAO extends EduSysDAO<HocVien, String> {
     }
 
     @Override
-    public HocVien selectById(String id) {
+    public HocVien selectById(Integer id) {
         List<HocVien> ds = this.selectBySql(SELECT_BY_ID_SQL, id);
         if (ds.isEmpty()) {
             return null;

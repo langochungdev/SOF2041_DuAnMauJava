@@ -1,11 +1,114 @@
 package UI;
 
-public class ThongKeD extends javax.swing.JDialog{
+import DAO.KhoaHocDAO;
+import DAO.ThongKeDAO;
+import Entity.KhoaHoc;
+import Utils.Auth;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 
+public class ThongKeD extends javax.swing.JDialog{
+    ThongKeDAO tkdao = new ThongKeDAO();
+    KhoaHocDAO khdao = new KhoaHocDAO();
+    
     public ThongKeD(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
         setTitle("Thống kê");
+        fillComboBoxKhoaHoc();
+        fillTableNguoiHoc();
+        fillTableDiemChuyenDe();
+        fillcomboBoxNam();
+        this.seclectTab(0);
+        if (!Auth.isManager()) {
+            tabs.remove(3);
+        }
+    }
+
+    public void seclectTab(int index) {
+        tabs.setSelectedIndex(index);
+    }
+
+    void fillComboBoxKhoaHoc() {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cboKhoaHoc.getModel();
+        model.removeAllElements();
+        List<KhoaHoc> list = khdao.selectAll();
+        for (KhoaHoc kh : list) {
+            model.addElement(kh);
+        }
+        cboKhoaHoc.setSelectedIndex(0);
+    }
+
+    String getXepLoai(double diem) {
+        if (diem < 5) {
+            return "Chưa đạt";
+        }
+        if (diem < 6.5) {
+            return "Trung bình";
+        }
+        if (diem < 7.5) {
+            return "Khá";
+        }
+        if (diem < 9) {
+            return "Giỏi";
+        }
+        return "Xuất sắc";
+    }
+
+    void fillTableBangDiem() {
+        DefaultTableModel model = (DefaultTableModel) tblBangDiem.getModel();
+        model.setRowCount(0);
+        KhoaHoc kh = (KhoaHoc) cboKhoaHoc.getSelectedItem();
+        if (kh != null) { // Ensure kh is not null
+            List<Object[]> list = tkdao.getBangDiem(kh.getMaKH());
+            for (Object[] row : list) {
+                double diem = (double) row[2];
+                model.addRow(new Object[] { row[0], row[1], row[2], getXepLoai(diem) });
+            }
+        }
+    }
+
+    void fillTableNguoiHoc() {
+        DefaultTableModel model = (DefaultTableModel) tblNguoiHoc.getModel();
+        model.setRowCount(0);
+        List<Object[]> list = tkdao.getLuongNguoiHoc();
+        for (Object[] row : list) {
+            model.addRow(row);
+        }
+    }
+
+    void fillTableDiemChuyenDe() {
+        DefaultTableModel model = (DefaultTableModel) tblDiemChuyenDe.getModel();
+        model.setRowCount(0);
+        List<Object[]> list = tkdao.getDiemChuyenDe();
+        for (Object[] row : list) {
+            model.addRow(new Object[] { row[0], row[1], row[2], row[3], String.format("%.1f", row[4]) });
+        }
+    }
+
+    void fillcomboBoxNam() {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cboNam.getModel();
+        model.removeAllElements();
+        List<Integer> list = khdao.selectYears();
+        for (Integer year : list) {
+            model.addElement(year);
+        }
+    }
+
+    void fillTableDoanhThu() {
+        DefaultTableModel model = (DefaultTableModel) tblDoanhThu.getModel();
+        model.setRowCount(0);
+        Object selectedItem = cboNam.getSelectedItem();
+        if (selectedItem != null) {
+            int nam = (Integer) selectedItem;
+            List<Object[]> list = tkdao.getDoanhThu(nam);
+            for (Object[] row : list) {
+                model.addRow(row);
+            }
+        } else {
+            System.out.println("Chưa chọn năm hoặc giá trị không hợp lệ!");
+        }
     }
 
 
@@ -32,8 +135,6 @@ public class ThongKeD extends javax.swing.JDialog{
         jLabel3 = new javax.swing.JLabel();
         cboNam = new javax.swing.JComboBox<>();
 
-        setResizable(true);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 255));
         jLabel1.setText("TỔNG HỢP THỐNG KÊ");
@@ -41,6 +142,12 @@ public class ThongKeD extends javax.swing.JDialog{
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel2.setText("KHOÁ HỌC:");
+
+        cboKhoaHoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboKhoaHocActionPerformed(evt);
+            }
+        });
 
         tblBangDiem.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -188,6 +295,12 @@ public class ThongKeD extends javax.swing.JDialog{
 
         jLabel3.setText("NĂM:");
 
+        cboNam.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboNamActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -241,6 +354,14 @@ public class ThongKeD extends javax.swing.JDialog{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cboKhoaHocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboKhoaHocActionPerformed
+        fillTableBangDiem();
+    }//GEN-LAST:event_cboKhoaHocActionPerformed
+
+    private void cboNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboNamActionPerformed
+        fillTableDoanhThu();
+    }//GEN-LAST:event_cboNamActionPerformed
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {

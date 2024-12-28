@@ -13,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class ChuyenDeD extends javax.swing.JDialog {
 
-
     public ChuyenDeD(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();

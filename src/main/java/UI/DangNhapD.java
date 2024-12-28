@@ -1,5 +1,4 @@
 package UI;
-
 import DAO.NhanVienDAO;
 import Entity.NhanVien;
 import Utils.Auth;
@@ -7,7 +6,8 @@ import Utils.MsgBox;
 import Utils.XImage;
 
 public class DangNhapD extends javax.swing.JDialog{
-
+    NhanVienDAO dao = new NhanVienDAO();
+    
     public DangNhapD(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -20,11 +20,12 @@ public class DangNhapD extends javax.swing.JDialog{
         setTitle("Login");
     }
     
-    NhanVienDAO dao = new NhanVienDAO();
+    
     void dangNhap(){
         String MaNV = txtTK.getText();
         String password = new String(txtMK.getPassword());
         NhanVien nv = dao.selectById(MaNV);
+        
         if(nv == null){
             MsgBox.alert(this, "Sai đăng nhập");
         }else{

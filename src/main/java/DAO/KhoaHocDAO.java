@@ -86,7 +86,7 @@ public class KhoaHocDAO extends EduSysDAO<KhoaHoc, String> {
     }
 
     public List<Integer> selectYears(){
-        String sql = "delect distinct year(NgayKG) Year from KhoaHoc order by Year desc";
+        String sql = "select distinct year(NgayKG) as Year from KhoaHoc order by Year desc";
         List<Integer> ds = new ArrayList<>();
         ResultSet rs = JdbcHelper.execQuery(sql);
         try {
