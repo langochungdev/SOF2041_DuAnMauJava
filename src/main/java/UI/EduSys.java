@@ -106,7 +106,7 @@ public class EduSys extends javax.swing.JFrame {
     //phần thống kê
     public void openThongKeD() {
         if (Auth.isLogin()) {
-            if (Auth.isManager()) {
+            if (!Auth.isManager()) {
                 MsgBox.alert(this, "Bạn không có quyền xem doanh thu!");
                 return;
             } else {

@@ -22,7 +22,7 @@ public class ThongKeD extends javax.swing.JDialog{
         fillTableDiemChuyenDe();
         fillcomboBoxNam();
         this.seclectTab(0);
-        if (!Auth.isManager()) {
+        if(!Auth.isManager()){
             tabs.remove(3);
         }
     }
