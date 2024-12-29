@@ -23,7 +23,7 @@ public class ChuyenDeD extends javax.swing.JDialog {
         setIconImage(XImage.getAppIcon());
         setLocationRelativeTo(null);
         setTitle("HE THONG QUAN LY DAO TAO EDUSYS");
-            fillTable();
+        fillTable();
         updateStatus();
     }
 
@@ -453,11 +453,11 @@ public class ChuyenDeD extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
-        clearForm();
+        delete();
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void btnMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoiActionPerformed
-        delete();
+        clearForm();
     }//GEN-LAST:event_btnMoiActionPerformed
 
     private void btnFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFirstActionPerformed

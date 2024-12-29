@@ -125,13 +125,8 @@ go
 
 
 INSERT INTO NhanVien VALUES
-(N'thuynt', N'123456', N'Nguyễn Thị Thủy', 0),
-(N'namvp', N'654321', N'Phạm Văn Nam', 0),
-(N'mainh', N'password', N'Nguyễn Anh Mai', 1),
-(N'thinhnc', N'thinh123', N'Nguyễn Công Thịnh', 0),
-(N'linhnt', N'linh123', N'Nguyễn Thị Linh', 1),
-('hung', '123', 'la ngoc hung', 0),
-('hung4', '1234', 'la ngoc hung', 1)
+('hungln', '123', 'la ngoc hung', 1),
+('hunglnf', '123', 'la ngoc hung', 0)
 
 INSERT INTO ChuyenDe VALUES
 (N'JAV01', N'Lập trình Java cơ bản', 2500, 90, N'GAME.png', N'JAV01 - Lập trình Java cơ bản'),
@@ -140,27 +135,27 @@ INSERT INTO ChuyenDe VALUES
 (N'PRO01', N'Dự án với Swing & JDBC', 3000, 90, N'VBPR.png', N'PRO01 - Dự án với Swing & JDBC')
 
 INSERT INTO NguoiHoc VALUES
-(N'PY00060', N'Vũ Thị Hương', '2005-10-12', 0, N'0388928274', N'huongvt@fpt.edu.vn', N'0388928274 - Vũ Thị Hương', N'namvp', '2024-02-20'),
+(N'PY00060', N'Vũ Thị Hương', '2005-10-12', 0, N'0388928274', N'huongvt@fpt.edu.vn', N'0388928274 - Vũ Thị Hương', N'hungln', '2024-02-20'),
 (N'PY00061', N'Trần Đức Anh', '2005-08-15', 1, N'0388928197', N'anhtd@fpt.edu.vn', N'0388928197 - Trần Đức Anh', N'mainh', '2024-03-05'),
-(N'PY00062', N'Huỳnh Minh Tuấn', '2005-11-25', 1,  N'0388928311', N'tuanhm@fpt.edu.vn', N'0388928311 - Huỳnh Minh Tuấn', N'thuynt', '2024-04-10'),
-(N'PY00063', N'Phạm Thị Hằng', '2005-09-01', 0, N'0388928357', N'hangpt@fpt.edu.vn', N'0388928357 - Phạm Thị Hằng', N'thinhnc', '2024-06-10'),
-(N'PY00064', N'Trần Văn Khải', '2005-07-12', 1, N'0388928496', N'khaitv@fpt.edu.vn', N'0388928496 - Trần Văn Khải', N'thuynt', '2024-06-15'),
-(N'PY00065', N'Hoàng Thị Ái', '2005-12-20', 0, N'0388928224', N'aiht@fpt.edu.vn', N'0388928224 - Hoàng Thị Ái', N'namvp', '2024-06-20'),
-(N'PY00031', N'Đỗ Ngọc Linh', '2005-04-12', 0, N'0388928437', N'linhdnpy00031@fpt.edu.vn', N'0388928437 - Đỗ Ngọc Linh', N'thuynt', '2024-06-05'),
-(N'PY00055', N'Nguyễn Thị Sáu','2005-12-05', 0, N'0388928867', N'sauntpy00055@fpt.edu.vn', N'0388928867 - Nguyễn Thị Sáu', N'thinhnc','2024-11-20'),
-(N'PY00025', N'Huỳnh Phúc Khang','2005-09-15' , 1, N'0388928246', N'khanghppy00025@fpt.edu.vn', N'0388928246 - Huỳnh Phúc Khang', N'mainh','2024-03-13'),
-(N'PY00028', N'Nguyễn Thuỳ Linh','2005-07-17', 0, N'0388928368', N'linhntpy00028@fpt.edu.vn', N'0388928368 - Nguyễn Thuỳ Linh', N'namvp','2024-01-16'),
-(N'PY00056', N'Tô Lâm', '2005-09-21', 1, N'0388928689', N'lamtpy00056@fpt.edu.vn', N'0388928689 - Tô Lâm', N'linhnt','2024-10-19')
+(N'PY00062', N'Huỳnh Minh Tuấn', '2005-11-25', 1,  N'0388928311', N'tuanhm@fpt.edu.vn', N'0388928311 - Huỳnh Minh Tuấn', N'hungln', '2024-04-10'),
+(N'PY00063', N'Phạm Thị Hằng', '2005-09-01', 0, N'0388928357', N'hangpt@fpt.edu.vn', N'0388928357 - Phạm Thị Hằng', N'hungln', '2024-06-10'),
+(N'PY00064', N'Trần Văn Khải', '2005-07-12', 1, N'0388928496', N'khaitv@fpt.edu.vn', N'0388928496 - Trần Văn Khải', N'hungln', '2024-06-15'),
+(N'PY00065', N'Hoàng Thị Ái', '2005-12-20', 0, N'0388928224', N'aiht@fpt.edu.vn', N'0388928224 - Hoàng Thị Ái', N'hungln', '2024-06-20'),
+(N'PY00031', N'Đỗ Ngọc Linh', '2005-04-12', 0, N'0388928437', N'linhdnpy00031@fpt.edu.vn', N'0388928437 - Đỗ Ngọc Linh', N'hungln', '2024-06-05'),
+(N'PY00055', N'Nguyễn Thị Sáu','2005-12-05', 0, N'0388928867', N'sauntpy00055@fpt.edu.vn', N'0388928867 - Nguyễn Thị Sáu', N'hungln','2024-11-20'),
+(N'PY00025', N'Huỳnh Phúc Khang','2005-09-15' , 1, N'0388928246', N'khanghppy00025@fpt.edu.vn', N'0388928246 - Huỳnh Phúc Khang', N'hungln','2024-03-13'),
+(N'PY00028', N'Nguyễn Thuỳ Linh','2005-07-17', 0, N'0388928368', N'linhntpy00028@fpt.edu.vn', N'0388928368 - Nguyễn Thuỳ Linh', N'hungln','2024-01-16'),
+(N'PY00056', N'Tô Lâm', '2005-09-21', 1, N'0388928689', N'lamtpy00056@fpt.edu.vn', N'0388928689 - Tô Lâm', N'hungln','2024-10-19')
 
 INSERT INTO KhoaHoc VALUES
-(N'JAV01', 2500, 90, '2024-09-05', N'Lập trình Java cơ bản', N'namvp', '2024-09-06'),
-(N'JAV02', 3000, 90, '2024-11-06', N'Lập trình Java nâng cao', N'mainh', '2024-11-16'),
-(N'WEB01', 2000, 70, '2024-10-12', N'Thiết kế web với HTML và CSS', N'thuynt', '2024-10-13'),
-(N'PRO01', 3000, 90, '2024-12-05', N'Lập trình Java cơ bản', N'namvp', '2024-12-06'),
-(N'JAV01', 2500, 90, '2024-08-10', N'Lập trình Java cơ bản', N'thinhnc', '2024-08-11'),
-(N'JAV02', 3000, 90, '2024-10-05', N'Lập trình Java nâng cao', N'linhnt', '2024-10-06'),
-(N'WEB01', 2000, 70, '2024-11-05', N'Thiết kế web với HTML và CSS', N'linhnt', '2024-11-06'),
-(N'JAV01', 2500, 90, '2024-11-11', N'Lập trình Java cơ bản', N'thuynt', '2024-11-16')
+(N'JAV01', 2500, 90, '2024-09-05', N'Lập trình Java cơ bản', N'hungln', '2024-09-06'),
+(N'JAV02', 3000, 90, '2024-11-06', N'Lập trình Java nâng cao', N'hungln', '2024-11-16'),
+(N'WEB01', 2000, 70, '2024-10-12', N'Thiết kế web với HTML và CSS', N'hungln', '2024-10-13'),
+(N'PRO01', 3000, 90, '2024-12-05', N'Lập trình Java cơ bản', N'hungln', '2024-12-06'),
+(N'JAV01', 2500, 90, '2024-08-10', N'Lập trình Java cơ bản', N'hungln', '2024-08-11'),
+(N'JAV02', 3000, 90, '2024-10-05', N'Lập trình Java nâng cao', N'hungln', '2024-10-06'),
+(N'WEB01', 2000, 70, '2024-11-05', N'Thiết kế web với HTML và CSS', N'hungln', '2024-11-06'),
+(N'JAV01', 2500, 90, '2024-11-11', N'Lập trình Java cơ bản', N'hungln', '2024-11-16')
 
 INSERT INTO HocVien VALUES
 (1, N'PY00060', 8),

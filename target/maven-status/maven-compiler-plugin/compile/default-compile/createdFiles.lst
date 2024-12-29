@@ -10,7 +10,9 @@ UI\ChuyenDeD$8.class
 UI\DangNhapD$2.class
 Entity\NguoiHoc.class
 UI\ThongKeD$6.class
+UI\NguoiHocD$4.class
 UI\KhoaHocD.class
+UI\NguoiHocD$10.class
 UI\EduSys$6.class
 UI\NhanVienD$3.class
 UI\ChuyenDeD$2.class
@@ -22,6 +24,7 @@ UI\HocVienD$1.class
 UI\ChaoD.class
 UI\ChuyenDeD$9.class
 UI\TestDemo.class
+UI\NguoiHocD$5.class
 UI\NhanVienD$2.class
 DAO\NguoiHocDAO.class
 UI\NhanVienD$9.class
@@ -35,12 +38,14 @@ UI\ThongKeD$2.class
 UI\DangNhapD$1.class
 UI\ChuyenDeD$7.class
 UI\ThongKeD$7$1.class
+UI\NguoiHocD$3.class
 UI\ThongKeD$5.class
 UI\ChuyenDeD$4.class
 UI\NhanVienD$1.class
 UI\Demo.class
 UI\EduSys$12.class
 UI\DoiMatKhauD$1$1.class
+UI\NguoiHocD$12$1.class
 UI\EduSys$3.class
 Utils\Xdate.class
 DAO\NhanVienDAO.class
@@ -55,7 +60,7 @@ UI\ThongKeD.class
 UI\DangNhapD$3.class
 UI\ThongKeD$4.class
 UI\HocVienD.class
-UI\NguoiHocD$2$1.class
+UI\NguoiHocD$7.class
 Utils\MsgBox.class
 UI\EduSys$4.class
 UI\EduSys$14.class
@@ -72,13 +77,16 @@ UI\NguoiHocD$1.class
 UI\ChuyenDeD$10.class
 UI\ChuyenDeD$5.class
 DAO\HocVienDAO.class
+UI\NguoiHocD$12.class
 Utils\JdbcHelper.class
 Utils\Auth.class
 UI\Demo$1.class
 UI\GioiThieuD$1$1.class
 UI\EduSys$13.class
 UI\EduSys$19.class
+UI\NguoiHocD$11.class
 Entity\KhoaHoc.class
+UI\NguoiHocD$6.class
 UI\EduSys$5.class
 UI\EduSys$18.class
 Utils\XImage.class
@@ -100,6 +108,7 @@ UI\EduSys$15.class
 UI\EduSys$16.class
 UI\NhanVienD$10.class
 UI\EduSys$9.class
+UI\NguoiHocD$8.class
 UI\NhanVienD.class
 Entity\HocVien.class
 UI\ChaoD$2$1.class
@@ -107,6 +116,7 @@ UI\HocVienD$4.class
 UI\NhanVienD$6.class
 UI\EduSys$17.class
 UI\ChuyenDeD$11.class
+UI\NguoiHocD$9.class
 UI\ChuyenDeD.class
 UI\EduSys$22.class
 UI\KhoaHocD$2.class

@@ -16,6 +16,7 @@ public class ThongKeD extends javax.swing.JDialog{
         super(parent, modal);
         initComponents();
         setTitle("Thống kê");
+        setLocationRelativeTo(null);
         fillComboBoxKhoaHoc();
         fillTableNguoiHoc();
         fillTableDiemChuyenDe();

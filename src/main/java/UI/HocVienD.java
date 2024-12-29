@@ -23,6 +23,7 @@ public class HocVienD extends javax.swing.JDialog{
         super(parent, modal);
         initComponents();
         setTitle("Học viên");
+        setLocationRelativeTo(null);
         fillComboboxChuyenDe();
     }
     

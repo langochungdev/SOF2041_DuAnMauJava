@@ -6,6 +6,7 @@ public class KhoaHocD extends javax.swing.JDialog{
         super(parent, modal);
         initComponents();
         setTitle("Khoá học");
+        setLocationRelativeTo(null);
     }
 
     @SuppressWarnings("unchecked")

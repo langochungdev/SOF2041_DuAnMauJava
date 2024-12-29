@@ -5,6 +5,7 @@ public class DoiMatKhauD extends javax.swing.JDialog{
         super(parent, modal);
         initComponents();
         setTitle("Đổi mật khẩu");
+        setLocationRelativeTo(null);
     }
 
 

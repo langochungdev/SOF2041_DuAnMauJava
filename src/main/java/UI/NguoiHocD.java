@@ -1,11 +1,237 @@
 package UI;
 
+import DAO.NguoiHocDAO;
+import Entity.NguoiHoc;
+import Utils.Auth;
+import Utils.MsgBox;
+import Utils.Xdate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 public class NguoiHocD extends javax.swing.JDialog{
 
     public NguoiHocD(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
         setTitle("Người học");
+        setLocationRelativeTo(null);
+        fillTable();
+        updateStatus();
+    }
+
+    NguoiHocDAO nhdao = new NguoiHocDAO();
+    int row = -1;
+
+    void fillTable() {
+        DefaultTableModel model = (DefaultTableModel) tblNguoiHoc.getModel();
+        model.setRowCount(0);
+        try {
+            String keyword = txtTimKiem.getText();
+            List<NguoiHoc> list = nhdao.selectByKeyword(keyword);
+            for (NguoiHoc nh : list) {
+                Object[] rows = { nh.getMaNH(),
+                        nh.getHoTen(),
+                        nh.isGioiTinh() ? "Male" : "Female",
+                        Xdate.toString(nh.getNgaySinh(), "dd-MM-yyyy"),
+                        nh.getDienThoai(),
+                        nh.getEmail(),
+                        nh.getMaNV(),
+                        nh.getNgayDK()};
+                model.addRow(rows);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void edit() {
+        String manh = (String) tblNguoiHoc.getValueAt(this.row, 0);
+        NguoiHoc nh = nhdao.selectById(manh);
+        this.setForm(nh);
+        tabs.setSelectedIndex(0);
+        updateStatus();
+    }
+
+    void setForm(NguoiHoc nh) {
+        txtMaNH.setText(nh.getMaNH());
+        txtHoTen.setText(nh.getHoTen());
+        // txtNgaySinh.setText(nh.getNgaySinh());
+        if (nh.getNgaySinh() != null) {
+            txtNgaySinh.setText(Xdate.toString(nh.getNgaySinh(), "dd-MM-yyyy"));
+        } else {
+            txtNgaySinh.setText("");
+        }
+        txtEmail.setText(nh.getEmail());
+        txtDienThoai.setText(nh.getDienThoai());
+        txtGhiChu.setText(nh.getGhiChu());
+        rdoMale.setSelected(nh.isGioiTinh());
+        rdoFemale.setSelected(!nh.isGioiTinh());
+    }
+
+    NguoiHoc getForm() {
+        NguoiHoc nh = new NguoiHoc();
+        nh.setMaNH(txtMaNH.getText());
+        nh.setHoTen(txtHoTen.getText());
+        nh.setDienThoai(txtDienThoai.getText());
+        nh.setGhiChu(txtGhiChu.getText());
+        nh.setNgayDK(new Date());
+        try {
+            String ngaySinhStr = txtNgaySinh.getText();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            Date ngaySinh = sdf.parse(ngaySinhStr);
+            nh.setNgaySinh(ngaySinh);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Xử lý lỗi chuyển đổi ngày tháng nếu cần
+        }
+        nh.setEmail(txtEmail.getText());
+        if (rdoMale.isSelected()) {
+            nh.setGioiTinh(true);
+        } else if (rdoFemale.isSelected()) {
+            nh.setGioiTinh(false);
+        }
+        nh.setMaNV(Auth.user.getMaNV());
+        return nh;
+    }
+
+    void updateStatus() {
+        boolean edit = (this.row >= 0);
+        boolean first = (this.row == 0);
+        boolean last = (this.row == tblNguoiHoc.getRowCount() - 1);
+        // Form state
+        txtMaNH.setEditable(!edit);
+        btnThem.setEnabled(!edit);
+        btnSua.setEnabled(edit);
+        btnXoa.setEnabled(edit);
+        // Directional state
+        btnFirst.setEnabled(edit && !first);
+        btnPrev.setEnabled(edit && !first);
+        btnNext.setEnabled(edit && !last);
+        btnLast.setEnabled(edit && !last);
+    }
+
+    void clearForm() {
+        this.setForm(new NguoiHoc());
+        this.updateStatus();
+        row = -1;
+        updateStatus();
+    }
+
+    void insert() {
+        NguoiHoc nh = getForm();
+        
+        if (nh.getHoTen().length() > 35) {
+        MsgBox.alert(this, "Họ tên phải dưới 35 kí tự!");
+        return;
+    }
+        
+    if (!nh.getEmail().matches("^[\\w!#$%&'*+/=?^`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^`{|}~-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$")) {
+        MsgBox.alert(this, "Email không hợp lệ!");
+        return;
+    }
+        
+        NguoiHoc nhCheck = nhdao.selectById(nh.getMaNH());
+        if (nhCheck != null) {
+        MsgBox.alert(this, "Mã người học đã tồn tại!");
+        return;
+    }
+        
+        try {
+            nhdao.insert(nh);
+            fillTable();
+            clearForm();
+            MsgBox.alert(this, "Thêm mới thành công!");
+        } catch (Exception e) {
+            MsgBox.alert(this, "Thêm mới thất bại!");
+        }
+    }
+
+    void update() {
+        NguoiHoc nh = getForm();
+        
+        if (nh.getHoTen().length() > 35) {
+        MsgBox.alert(this, "Họ tên phải dưới 35 kí tự!");
+        return;
+    }
+        
+    if (!nh.getEmail().matches("^[\\w!#$%&'*+/=?^`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^`{|}~-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$")) {
+        MsgBox.alert(this, "Email không hợp lệ!");
+        return;
+    }
+        
+        NguoiHoc nhCheck = nhdao.selectById(nh.getMaNH());
+        if (nhCheck != null) {
+        MsgBox.alert(this, "Mã người học đã tồn tại!");
+        return;
+    }
+        
+        try {
+            nhdao.update(nh);
+            fillTable();
+            MsgBox.alert(this, "Cập nhật thành công!");
+        } catch (Exception e) {
+            MsgBox.alert(this, "Cập nhật thất bại!");
+        }
+    }
+
+    void delete() {
+        if (!Auth.isManager()) {
+            MsgBox.alert(this, "Bạn không có quyền xoá người học này!");
+        } else {
+            String manh = txtMaNH.getText();
+            if (MsgBox.confirm(this, "Bạn thực sự muốn xoá người học này?")) {
+                try {
+                    nhdao.delete(manh);
+                    this.fillTable();
+                    this.clearForm();
+                    MsgBox.alert(this, "Bạn xoá thành công!");
+                } catch (Exception e) {
+                    MsgBox.alert(this, "Xoá thất bại!");
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    void search() {
+        fillTable();
+        clearForm();
+        row = -1;
+        updateStatus();
+    }
+
+    void first() {
+        this.row = 0;
+        this.edit();
+    }
+
+    void prev() {
+        if (this.row > 0) {
+            this.row--;
+            this.edit();
+        }
+    }
+
+    void next() {
+        if (this.row < tblNguoiHoc.getRowCount() - 1) {
+            this.row++;
+            this.edit();
+        }
+    }
+
+    void last() {
+        this.row = tblNguoiHoc.getRowCount() - 1;
+        this.edit();
+    }
+    
+    private void fillFind(){
+        this.fillTable();
+        this.clearForm();
+        this.row = -1;
+        updateStatus();
     }
 
 
@@ -51,8 +277,6 @@ public class NguoiHocD extends javax.swing.JDialog{
         jScrollPane1 = new javax.swing.JScrollPane();
         tblNguoiHoc = new javax.swing.JTable();
 
-        setResizable(true);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(51, 51, 255));
         jLabel1.setText("QUẢN LÝ NGƯỜI HỌC");
@@ -84,20 +308,60 @@ public class NguoiHocD extends javax.swing.JDialog{
         jScrollPane2.setViewportView(txtGhiChu);
 
         btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemActionPerformed(evt);
+            }
+        });
 
         btnSua.setText("Sửa");
+        btnSua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaActionPerformed(evt);
+            }
+        });
 
         btnXoa.setText("Xoá");
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaActionPerformed(evt);
+            }
+        });
 
         btnMoi.setText("Mới");
+        btnMoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoiActionPerformed(evt);
+            }
+        });
 
         btnFirst.setText("|<");
+        btnFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFirstActionPerformed(evt);
+            }
+        });
 
         btnPrev.setText("<<");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
 
         btnNext.setText(">>");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
 
         btnLast.setText(">|");
+        btnLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLastActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -220,6 +484,11 @@ public class NguoiHocD extends javax.swing.JDialog{
         jLabel2.setText("Tìm kiếm");
 
         btnTim.setText("Tìm");
+        btnTim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimActionPerformed(evt);
+            }
+        });
 
         tblNguoiHoc.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -235,6 +504,11 @@ public class NguoiHocD extends javax.swing.JDialog{
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tblNguoiHoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblNguoiHocMousePressed(evt);
             }
         });
         jScrollPane1.setViewportView(tblNguoiHoc);
@@ -311,6 +585,52 @@ public class NguoiHocD extends javax.swing.JDialog{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tblNguoiHocMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblNguoiHocMousePressed
+        if(evt.getClickCount() == 2){
+            this.row =tblNguoiHoc.rowAtPoint(evt.getPoint());
+            edit();
+        }
+    }//GEN-LAST:event_tblNguoiHocMousePressed
+
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
+        insert();
+    }//GEN-LAST:event_btnThemActionPerformed
+
+    private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
+        update();
+    }//GEN-LAST:event_btnSuaActionPerformed
+
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
+        delete();
+    }//GEN-LAST:event_btnXoaActionPerformed
+
+    private void btnMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoiActionPerformed
+        clearForm();
+    }//GEN-LAST:event_btnMoiActionPerformed
+
+    private void btnFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFirstActionPerformed
+        first();
+    }//GEN-LAST:event_btnFirstActionPerformed
+
+    private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
+        prev();
+    }//GEN-LAST:event_btnPrevActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        next();
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void btnLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLastActionPerformed
+        last();
+    }//GEN-LAST:event_btnLastActionPerformed
+
+    private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
+        search();
+        fillFind();
+    }//GEN-LAST:event_btnTimActionPerformed
+    
+    
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {

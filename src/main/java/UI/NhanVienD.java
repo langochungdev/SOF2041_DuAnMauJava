@@ -15,6 +15,7 @@ public class NhanVienD extends javax.swing.JDialog{
         super(parent, modal);
         initComponents();
         setTitle("Nhân viên");
+        setLocationRelativeTo(null);
         fillTable();
         updateStatus();
     }
