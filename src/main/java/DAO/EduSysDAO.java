@@ -8,5 +8,4 @@ public abstract class EduSysDAO<EntityType, KeyType>{
     public abstract List<EntityType> selectAll();
     public abstract EntityType selectById(KeyType id);
     public abstract List<EntityType> selectBySql(String sql, Object...args);
-    
 }

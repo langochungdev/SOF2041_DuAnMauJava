@@ -1,9 +1,8 @@
 package Utils;
-
 import java.awt.Component;
 import javax.swing.JOptionPane;
 
-public class MsgBox {
+public class MsgBox{
     public static void alert(Component parent, String message) {
         JOptionPane.showMessageDialog(parent, message, "EduSys", JOptionPane.INFORMATION_MESSAGE);
     }

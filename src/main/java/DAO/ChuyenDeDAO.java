@@ -41,11 +41,6 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
     }
 
     @Override
-    public List<ChuyenDe> selectAll() {
-        return this.selectBySql(SELECT_ALL_SQL);
-    }
-
-    @Override
     public ChuyenDe selectById(String id) {
         List<ChuyenDe> list = this.selectBySql(SELECT_BY_ID_SQL, id);
         if (list.isEmpty()) {
@@ -53,13 +48,18 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
         }
         return list.get(0);
     }
-
+    
     @Override
-    public List<ChuyenDe> selectBySql(String sql, Object... args) {
+    public List<ChuyenDe> selectAll() {
+        return this.selectBySql(SELECT_ALL_SQL);
+    }
+    
+    @Override
+    public List<ChuyenDe> selectBySql(String sql, Object...args) {
         List<ChuyenDe> ds = new ArrayList<>();
         try {
             ResultSet rs = JdbcHelper.execQuery(sql, args);
-            while (rs.next()) {
+            while (rs.next()){
                 ChuyenDe e = new ChuyenDe();
                 e.setMaCD(rs.getString("MaCD"));
                 e.setTenCD(rs.getString("TenCD"));

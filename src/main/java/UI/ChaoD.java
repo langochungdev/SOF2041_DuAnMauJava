@@ -1,25 +1,21 @@
 package UI;
-
 import Utils.XImage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-public class ChaoD extends javax.swing.JDialog {
-
+public class ChaoD extends javax.swing.JDialog{
+    
     public ChaoD(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        init();
-    }
-    
-    void init(){
         setIconImage(XImage.getAppIcon());
         setLocationRelativeTo(null);
-        setTitle("HE THONG QUAN LY DAO TAO EDUSYS");
-        new Timer(20, new ActionListener() {
+        setTitle("Wellcome");
+        
+        new Timer(20, new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 int value = pgb.getValue();
                 if(value < 100){
                     pgb.setValue(value + 1);
@@ -29,6 +25,7 @@ public class ChaoD extends javax.swing.JDialog {
             }
         }).start();
     }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

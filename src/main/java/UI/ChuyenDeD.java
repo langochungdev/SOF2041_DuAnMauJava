@@ -1,5 +1,4 @@
 package UI;
-
 import DAO.ChuyenDeDAO;
 import Entity.ChuyenDe;
 import Utils.Auth;
@@ -11,9 +10,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
-public class ChuyenDeD extends javax.swing.JDialog {
-
-    public ChuyenDeD(java.awt.Frame parent, boolean modal) {
+public class ChuyenDeD extends javax.swing.JDialog{
+    ChuyenDeDAO dao = new ChuyenDeDAO();
+    JFileChooser fileChooser = new JFileChooser();
+    int row = 0;
+    
+    public ChuyenDeD(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
         init();
@@ -22,22 +24,18 @@ public class ChuyenDeD extends javax.swing.JDialog {
     void init(){
         setIconImage(XImage.getAppIcon());
         setLocationRelativeTo(null);
-        setTitle("HE THONG QUAN LY DAO TAO EDUSYS");
+        setTitle("CHUYEN DE");
         fillTable();
         updateStatus();
     }
-
-    ChuyenDeDAO dao = new ChuyenDeDAO();
-    JFileChooser fileChooser = new JFileChooser();
-    int row = 0;
 
     public void fillTable() {
         DefaultTableModel model = (DefaultTableModel) tbDanhSach.getModel();
         model.setRowCount(0);
         try {
             List<ChuyenDe> list = dao.selectAll();
-            for (ChuyenDe cd : list) {
-                Object[] row = {
+            for(ChuyenDe cd: list){
+                Object[] row ={
                         cd.getMaCD(),
                         cd.getTenCD(),
                         cd.getHocPhi(),
@@ -46,13 +44,13 @@ public class ChuyenDeD extends javax.swing.JDialog {
                 };
                 model.addRow(row);
             }
-        } catch (Exception e) {
+        }catch(Exception e){
             MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
         }
     }
 
-    void chonAnh() {
-        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+    void chonAnh(){
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
             File file = fileChooser.getSelectedFile();
             XImage.save(file);
             ImageIcon icon = XImage.read(file.getName());
@@ -61,7 +59,7 @@ public class ChuyenDeD extends javax.swing.JDialog {
         }
     }
 
-    void setForm(ChuyenDe model) {
+    void setForm(ChuyenDe model){
         txtMa.setText(model.getMaCD());
         txtTen.setText(model.getTenCD());
         txtGio.setText(String.valueOf(model.getThoiLuong()));
@@ -78,7 +76,7 @@ public class ChuyenDeD extends javax.swing.JDialog {
 
     }
 
-    ChuyenDe getForm() {
+    ChuyenDe getForm(){
         ChuyenDe cd = new ChuyenDe();
         cd.setMaCD(txtMa.getText());
         cd.setTenCD(txtTen.getText());
@@ -98,7 +96,7 @@ public class ChuyenDeD extends javax.swing.JDialog {
                 updateStatus();
                 tabs.setSelectedIndex(0);
             }
-        } catch (Exception e) {
+        }catch(Exception e){
             MsgBox.alert(this, "Lỗi truy vấn dữ liệu");
         }
     }
@@ -107,7 +105,6 @@ public class ChuyenDeD extends javax.swing.JDialog {
         boolean edit = this.row >= 0;
         boolean first = this.row == 0;
         boolean last = this.row == tbDanhSach.getRowCount() - 1;
-        // trang thái form
         txtMa.setEditable(!edit);
         btnThem.setEnabled(!edit);
         btnSua.setEnabled(edit);
@@ -121,47 +118,46 @@ public class ChuyenDeD extends javax.swing.JDialog {
 
     void clearForm() {
         this.setForm(new ChuyenDe());
-        this.updateStatus();
         this.row = -1;
         updateStatus();
     }
 
-    void insert() {
+    void insert(){
         ChuyenDe cd = getForm();
         try {
             dao.insert(cd);
             fillTable();
             clearForm();
             MsgBox.alert(this, "Thêm mới thành công!");
-        } catch (Exception e) {
+        }catch(Exception e){
             MsgBox.alert(this, "Thêm mới thất bại!");
         }
     }
 
-    void update() {
+    void update(){
         ChuyenDe cd = getForm();
         try {
             dao.update(cd);
             fillTable();
             MsgBox.alert(this, "Cập nhật thành công");
-        } catch (Exception e) {
+        }catch(Exception e){
             MsgBox.alert(this, "Cập nhật thất bại!");
         }
     }
 
     // nhân viên tạo chuyên đề thì có thể xoá chuyên đề đc và cả trưởng phòng chú ý
-    void delete() {
-        if (!Auth.isManager()) {
+    void delete(){
+        if(!Auth.isManager()){
             MsgBox.alert(this, "You're not authorized to delete employee!");
-        } else {
+        }else{
             String id = txtMa.getText();
-            if (MsgBox.confirm(this, "Do you want to delete this subject?")) {
+            if (MsgBox.confirm(this, "Do you want to delete this subject?")){
                 try {
                     dao.delete(id);
                     fillTable();
                     clearForm();
                     MsgBox.alert(this, "Delete sucessfully!");
-                } catch (Exception e) {
+                }catch(Exception e){
                     MsgBox.alert(this, "Delete unsucessfully!");
                 }
             }
@@ -466,21 +462,21 @@ public class ChuyenDeD extends javax.swing.JDialog {
     }//GEN-LAST:event_btnFirstActionPerformed
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
-        if (row > 0) {
+        if(row > 0){
             row--;
             edit();
         }
     }//GEN-LAST:event_btnPrevActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        if (row < tbDanhSach.getRowCount() - 1) {
+        if(row < tbDanhSach.getRowCount()-1){
             row++;
             edit();
         }
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLastActionPerformed
-        row = tbDanhSach.getRowCount() - 1;
+        row = tbDanhSach.getRowCount()-1;
         edit();
     }//GEN-LAST:event_btnLastActionPerformed
 

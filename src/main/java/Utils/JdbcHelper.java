@@ -27,12 +27,12 @@ public class JdbcHelper {
         Connection conn = getConnection();
         PreparedStatement ps = null;
         try{
-            if (sql.trim().startsWith("{")) {
+            if (sql.trim().startsWith("{")){
                 ps = conn.prepareCall(sql); //proc 
             }else{
                 ps = conn.prepareStatement(sql);
             }
-            for (int i = 0; i<args.length; i++) {
+            for (int i = 0; i<args.length; i++){
                 ps.setObject(i + 1, args[i]);
             }
             return ps;
