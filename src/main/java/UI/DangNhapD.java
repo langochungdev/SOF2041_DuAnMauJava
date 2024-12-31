@@ -20,16 +20,15 @@ public class DangNhapD extends javax.swing.JDialog{
         setTitle("Login");
     }
     
-    
     void dangNhap(){
         String MaNV = txtTK.getText();
-        String password = new String(txtMK.getPassword());
+        String pw = new String(txtMK.getPassword());
         NhanVien nv = dao.selectById(MaNV);
         
         if(nv == null){
             MsgBox.alert(this, "Sai đăng nhập");
         }else{
-            if(!nv.getMatKhau().equals(password)){
+            if(!nv.getMatKhau().equals(pw)){
                 MsgBox.alert(this, "sai mật khẩu");
             }else{
                 Auth.user = nv;

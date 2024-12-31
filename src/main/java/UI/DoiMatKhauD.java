@@ -1,6 +1,11 @@
 package UI;
+import DAO.NhanVienDAO;
+import Utils.Auth;
+import Utils.MsgBox;
 
 public class DoiMatKhauD extends javax.swing.JDialog{
+    NhanVienDAO dao = new NhanVienDAO();
+    
     public DoiMatKhauD(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
@@ -8,6 +13,23 @@ public class DoiMatKhauD extends javax.swing.JDialog{
         setLocationRelativeTo(null);
     }
 
+    void doiMatKhau(){
+        String manv = txtMaNV.getText();
+        String mk = new String(txtMatKhau.getPassword());
+        String mkMoi1 = new String(txtMatKhau1.getPassword());
+        String mkMoi2 = new String(txtMatKhau2.getPassword());
+        if (!manv.equalsIgnoreCase(Auth.user.getMaNV())){
+            MsgBox.alert(this, "Sai tên đăng nhập");
+        }else if(!mk.equals(Auth.user.getMatKhau())){
+            MsgBox.alert(this, "Sai mật khẩu");
+        }else if(!mkMoi1.equals(mkMoi2)){
+            MsgBox.alert(this, "Mật khẩu không khớp!");
+        }else{
+            Auth.user.setMatKhau(mkMoi1);
+            dao.update(Auth.user);
+            MsgBox.alert(this, "Đổi mật khẩu thành công!");
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -26,8 +48,6 @@ public class DoiMatKhauD extends javax.swing.JDialog{
         txtMatKhau = new javax.swing.JPasswordField();
         txtMatKhau2 = new javax.swing.JPasswordField();
 
-        setResizable(true);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 153, 102));
         jLabel1.setText("ĐỔI MẬT KHẨU");
@@ -40,9 +60,21 @@ public class DoiMatKhauD extends javax.swing.JDialog{
 
         jLabel5.setText("Xác nhận mật khẩu mới");
 
+        btnDongY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/Refresh.png"))); // NOI18N
         btnDongY.setText("Đồng ý");
+        btnDongY.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDongYActionPerformed(evt);
+            }
+        });
 
+        btnHuyBo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/No.png"))); // NOI18N
         btnHuyBo.setText("Huỷ bỏ");
+        btnHuyBo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHuyBoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -100,6 +132,14 @@ public class DoiMatKhauD extends javax.swing.JDialog{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnDongYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDongYActionPerformed
+        doiMatKhau();
+    }//GEN-LAST:event_btnDongYActionPerformed
+
+    private void btnHuyBoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyBoActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnHuyBoActionPerformed
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {
