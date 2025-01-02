@@ -1,5 +1,4 @@
 package UI;
-
 public class GioiThieuD extends javax.swing.JDialog{
 
     public GioiThieuD(java.awt.Frame parent, boolean modal){
@@ -21,6 +20,8 @@ public class GioiThieuD extends javax.swing.JDialog{
         jRadioButton1.setText("jRadioButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/poly.png"))); // NOI18N
 
         txtIntro.setEditable(false);
         txtIntro.setColumns(20);

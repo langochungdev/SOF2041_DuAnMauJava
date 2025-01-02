@@ -24,10 +24,10 @@ public class HocVienD extends javax.swing.JDialog{
         initComponents();
         setTitle("Học viên");
         setLocationRelativeTo(null);
-        fillComboboxChuyenDe();
+        fillcbbChuyenDe();
     }
     
-    void fillComboboxChuyenDe(){
+    void fillcbbChuyenDe(){
         DefaultComboBoxModel model = (DefaultComboBoxModel) cboChuyenDe.getModel();
         model.removeAllElements();
         try{
@@ -35,40 +35,39 @@ public class HocVienD extends javax.swing.JDialog{
             for(ChuyenDe cd : list){
                 model.addElement(cd);
             }
-            fillComboboxKhoaHoc();
+            fillcbbKhoaHoc();
         }catch(Exception e){
             MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
         }
     }
 
-    void fillComboboxKhoaHoc(){
+    void fillcbbKhoaHoc(){
         DefaultComboBoxModel model = (DefaultComboBoxModel) cboKhoaHoc.getModel();
         model.removeAllElements();
         try{
             ChuyenDe chuyenDe = (ChuyenDe) cboChuyenDe.getSelectedItem();
             if(chuyenDe != null){
                 List<KhoaHoc> list = khDAO.selectKhoaHocByMaCD(chuyenDe.getMaCD());
-                for(KhoaHoc khoaHoc : list){
-                    model.addElement(khoaHoc);
+                for(KhoaHoc kh : list){
+                    model.addElement(kh);
                 }
             }
-            fillTableHocVien();
+            filltbHocVien();
         }catch(Exception e){
             MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
         }
     }
 
-    public void fillTableNguoiHoc(){
+    public void filltbNguoiHoc(){
         DefaultTableModel model = (DefaultTableModel) tblNguoiHoc.getModel();
         model.setRowCount(0);
         try{
             KhoaHoc kh = (KhoaHoc) cboKhoaHoc.getSelectedItem();
             if(kh != null){
-                System.out.println("MaKH:" + kh.getMaKH());
-                String keyword = txtTimKiem.getText();
-                List<NguoiHoc> list = nhDAO.selectByKeyword(keyword);
+                String maKH = txtTimKiem.getText();
+                List<NguoiHoc> list = nhDAO.selectByKeyword(maKH);
                 for(NguoiHoc nh : list){
-                    Object[] row = {
+                    Object[] row={
                         nh.getMaNH(),
                         nh.getHoTen(),
                         nh.getNgaySinh(),
@@ -84,20 +83,19 @@ public class HocVienD extends javax.swing.JDialog{
         }
     }
     
-    public void fillTableHocVien(){
+    public void filltbHocVien(){
         DefaultTableModel model = (DefaultTableModel) tblHocVien.getModel();
         model.setRowCount(0);
         try{
             KhoaHoc kh = (KhoaHoc) cboKhoaHoc.getSelectedItem();
             if(kh != null){
-                System.out.println("MaKH:" + kh.getMaKH());
                 List<HocVien> list = hvDAO.selectByKhoaHoc(kh.getMaKH());
-                System.out.println("list:"+list.size());
-                for(int i = 0; i<list.size();i++){
+                for(int i = 0; i<list.size(); i++){
                     HocVien hv = list.get(i);
                     String hoTen = nhDAO.selectById(hv.getMaNH()).getHoTen();
-                    Object[] row = {
-                        i + 1, hv.getMaHV(),
+                    Object[] row={
+                        i + 1, 
+                        hv.getMaHV(),
                         hv.getMaNH(),
                         hoTen,
                         hv.getDiem()
@@ -105,23 +103,22 @@ public class HocVienD extends javax.swing.JDialog{
                     model.addRow(row);
                 }
             }
-            fillTableNguoiHoc();
+            filltbNguoiHoc();
         }catch(Exception e){
              MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
         }
     }
     
     void addHocVien(){
-        KhoaHoc khoaHoc = (KhoaHoc)cboKhoaHoc.getSelectedItem();
+        KhoaHoc kh = (KhoaHoc)cboKhoaHoc.getSelectedItem();
         for(int row : tblNguoiHoc.getSelectedRows()){
             HocVien hv = new HocVien();
-            hv.setMaKH(khoaHoc.getMaKH());
+            hv.setMaKH(kh.getMaKH());
             hv.setDiem(0);
             hv.setMaNH((String)tblNguoiHoc.getValueAt(row, 0));
-            System.out.println("=>"+hv.getMaKH()+"-"+hv.getMaNH()+"-"+hv.getDiem());
             hvDAO.insert(hv);
         }
-        fillTableHocVien();
+        filltbHocVien();
         tabs.setSelectedIndex(0);
     }
     
@@ -130,21 +127,21 @@ public class HocVienD extends javax.swing.JDialog{
             MsgBox.alert(this, "Bạn không đủ quyền để xoá học viên!");
         }else{
             if(MsgBox.confirm(this, "Bạn muốn xoá các học viên được chọn!")){
-                for(int row:tblHocVien.getSelectedRows()){
+                for(int row: tblHocVien.getSelectedRows()){
                     int maHV = (Integer)tblHocVien.getValueAt(row, 1);
                     hvDAO.delete(maHV);
                 }
-                fillTableHocVien();
+                filltbHocVien();
             }
         }
     }
     
     void updateDiem(){
-        for(int i = 0; i < tblHocVien.getRowCount();i++){
+        for(int i = 0; i < tblHocVien.getRowCount(); i++){
             int maHV = (Integer)tblHocVien.getValueAt(i, 1);
-            HocVien hocVien = hvDAO.selectById(maHV);
-            hocVien.setDiem(Double.parseDouble(tblHocVien.getValueAt(i, 4).toString()));
-            hvDAO.update(hocVien);
+            HocVien hv = hvDAO.selectById(maHV);
+            hv.setDiem(Double.parseDouble(tblHocVien.getValueAt(i, 4).toString()));
+            hvDAO.update(hv);
         }
         MsgBox.alert(this, "Cập nhật điểm thành công!");
     }
@@ -365,11 +362,11 @@ public class HocVienD extends javax.swing.JDialog{
     }//GEN-LAST:event_btnThemHVActionPerformed
 
     private void cboChuyenDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChuyenDeActionPerformed
-        fillComboboxKhoaHoc();
+        fillcbbKhoaHoc();
     }//GEN-LAST:event_cboChuyenDeActionPerformed
 
     private void txtTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimKiemActionPerformed
-        fillTableNguoiHoc();
+        filltbNguoiHoc();
     }//GEN-LAST:event_txtTimKiemActionPerformed
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
