@@ -10,7 +10,7 @@ public class JdbcHelper {
     public static final String PORT = "1433";
     public static final String DBNAME = "Test";
     public static final String USERNAME = "sa";
-    public static final String PASSWORD = "0000";
+    public static final String PASSWORD = "songlong";
 
     public static Connection getConnection() {
         String Url = "jdbc:sqlserver://"+ HOSTNAME+ ":"+ PORT+ ";databaseName="+ DBNAME+";encrypt=true;trustServerCertificate=true;";

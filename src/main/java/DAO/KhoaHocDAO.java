@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import Utils.JdbcHelper;
 
-public class KhoaHocDAO extends EduSysDAO<KhoaHoc, String> {
+public class KhoaHocDAO extends EduSysDAO<KhoaHoc, Integer> {
     String INSERT_SQL = "INSERT INTO KhoaHoc (MaCD, HocPhi, ThoiLuong, NgayKG, GhiChu, MaNV) VALUES (?, ?, ?, ?, ?, ?)";
     String UPDATE_SQL = "UPDATE KhoaHoc SET MaCD=?, HocPhi=?, ThoiLuong=?, NgayKG=?, GhiChu=?, MaNV=? WHERE MaKH=?";
     String DELETE_SQL = "DELETE FROM KhoaHoc WHERE MaKH=?";
@@ -38,7 +38,7 @@ public class KhoaHocDAO extends EduSysDAO<KhoaHoc, String> {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Integer id) {
         JdbcHelper.execUpdate(DELETE_SQL, id);
     }
 
@@ -48,7 +48,7 @@ public class KhoaHocDAO extends EduSysDAO<KhoaHoc, String> {
     }
 
     @Override
-    public KhoaHoc selectById(String id) {
+    public KhoaHoc selectById(Integer id) {
         List<KhoaHoc> ds = this.selectBySql(SELECT_BY_ID_SQL, id);
         if (ds.isEmpty()) {
             return null;

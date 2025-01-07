@@ -1,12 +1,244 @@
 package UI;
+import DAO.ChuyenDeDAO;
+import DAO.KhoaHocDAO;
+import Entity.ChuyenDe;
+import Entity.KhoaHoc;
+import Utils.Auth;
+import Utils.MsgBox;
+import Utils.Xdate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 
 public class KhoaHocD extends javax.swing.JDialog{
-
+    KhoaHocDAO khDAO = new KhoaHocDAO();
+    ChuyenDeDAO cdDAO = new ChuyenDeDAO();
+    int row = -1;
+    
     public KhoaHocD(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
         setTitle("Khoá học");
         setLocationRelativeTo(null);
+        this.fillComboBoxChuyenDe();
+        this.fillTable();
+        this.updateStatus();
+    }
+    
+
+    void fillComboBoxChuyenDe() {
+       DefaultComboBoxModel model = (DefaultComboBoxModel) cboChuyenDe.getModel();
+        model.removeAllElements();
+        List<ChuyenDe> list = cdDAO.selectAll();
+        for (ChuyenDe cd : list) {
+            model.addElement(cd);
+        }
+    }
+
+    void fillTable() {
+        DefaultTableModel model = (DefaultTableModel) tblKhoaHoc.getModel();
+        model.setRowCount(0);
+        try {
+            ChuyenDe chuyenDe = (ChuyenDe) cboChuyenDe.getSelectedItem();
+            if (chuyenDe != null) {
+                List<KhoaHoc> list = khDAO.selectKhoaHocByMaCD(chuyenDe.getMaCD());
+                for (KhoaHoc kh : list) {
+                    Object[] row = {
+                        kh.getMaKH(),
+                        kh.getThoiLuong(),
+                        kh.getHocPhi(),
+                        Xdate.toString(kh.getNgayKG(), "dd-MM-yyyy"),
+                        kh.getMaNV(),
+                        Xdate.toString(kh.getNgayTao(), "dd-MM-yyyy")
+                    };
+                    model.addRow(row);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    void chonChuyenDe() {
+        ChuyenDe chuyenDe = (ChuyenDe) cboChuyenDe.getSelectedItem();
+        if (chuyenDe != null) {
+            txtThoiLuong.setText(String.valueOf(chuyenDe.getThoiLuong()));
+            txtHocPhi.setText(String.valueOf(chuyenDe.getHocPhi()));
+            //String moTa = chuyenDe.getMoTa();
+            String tenCD = chuyenDe.getTenCD();
+            // Các thao tác khác liên quan đến chuyenDe
+        } else {
+            // Xử lý trường hợp chuyenDe là null nếu cần
+            txtThoiLuong.setText("");
+            txtHocPhi.setText("");
+            // Hiển thị hoặc xử lý trường hợp chuyenDe là null
+        }
+
+        this.fillTable();
+        this.row = -1;
+        tabs.setSelectedIndex(1);
+        this.updateStatus();
+    }
+    
+    void updateStatus() {
+        boolean edit = (this.row >= 0);
+        boolean first = (this.row == 0);
+        boolean last = (this.row == tblKhoaHoc.getRowCount() - 1);
+        // Form state
+        btnThem.setEnabled(!edit);
+        btnSua.setEnabled(edit);
+        btnXoa.setEnabled(edit);
+        // Directional state
+        btnFirst.setEnabled(edit && !first);
+        btnPrev.setEnabled(edit && !first);
+        btnNext.setEnabled(edit && !last);
+        btnLast.setEnabled(edit && !last);
+    }
+    
+    void edit() {
+        int makh = (int) tblKhoaHoc.getValueAt(this.row, 0);
+        KhoaHoc kh = khDAO.selectById(makh);
+        this.setForm(kh);
+        tabs.setSelectedIndex(0);
+        this.updateStatus();
+
+    }
+    
+    void clearForm() {
+        txtMaNV.setText("");
+        txtNgayKG.setText(""); // Đặt giá trị rỗng cho JTextField
+        txtHocPhi.setText("");
+        txtThoiLuong.setText("");
+        txtGhiChu.setText("");
+        txtNgayTao.setText(""); // Đặt giá trị rỗng cho JTextField
+
+        this.row = -1;
+        this.updateStatus();
+    }
+    
+    void setForm(KhoaHoc kh) {
+        ChuyenDe chuyenDe = cdDAO.selectById(kh.getMaCD());
+        if (chuyenDe != null) {
+            cboChuyenDe.setSelectedItem(chuyenDe);
+        }
+        int selectedCourseID = kh.getMaKH();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");   
+        if (kh.getNgayKG() != null) {
+            String ngayKG = dateFormat.format(kh.getNgayKG());
+            txtNgayKG.setText(ngayKG); 
+        } else {
+            txtNgayKG.setText(""); 
+        }
+        txtMaNV.setText(kh.getMaNV());
+        txtGhiChu.setText(kh.getGhiChu());
+        txtHocPhi.setText(String.valueOf(kh.getHocPhi()));
+        txtThoiLuong.setText(String.valueOf(kh.getThoiLuong()));
+        if (kh.getNgayTao() != null) {
+            String ngayTao = dateFormat.format(kh.getNgayTao());
+            txtNgayTao.setText(ngayTao); 
+        } else {
+            txtNgayTao.setText(""); 
+        }
+    }
+    
+    KhoaHoc getForm() {
+        KhoaHoc kh = new KhoaHoc();
+        ChuyenDe cd = (ChuyenDe) cboChuyenDe.getSelectedItem();
+        if (txtMaNV.getText().equals("")) {
+            kh.setMaNV(Auth.user.getMaNV());
+        } else {
+            kh.setMaNV(txtMaNV.getText());
+        }
+        kh.setMaCD(cd.getMaCD());
+        kh.setThoiLuong(Integer.parseInt(txtThoiLuong.getText()));
+        // Chuyển đổi chuỗi ngày tháng thành Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            Date ngayKG = dateFormat.parse(txtNgayKG.getText());
+            kh.setNgayKG(ngayKG);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Xử lý lỗi nếu cần thiết
+        }
+        kh.setHocPhi(Double.parseDouble(txtHocPhi.getText()));
+        kh.setGhiChu(txtGhiChu.getText());
+        kh.setMaKH(Integer.parseInt(cboChuyenDe.getToolTipText()));
+        try {
+            Date ngayTao = dateFormat.parse(txtNgayTao.getText());
+            kh.setNgayTao(ngayTao);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Xử lý lỗi nếu cần thiết
+        }
+        return kh;
+    }
+    
+    void insert() {
+        KhoaHoc nh = getForm();
+        try {
+            khDAO.insert(nh);
+            fillTable();
+            clearForm();
+            MsgBox.alert(this, "Thêm mới thành công!");
+        } catch (Exception e) {
+            MsgBox.alert(this, "Thêm mới thất bại!");
+                }
+    }
+    
+    void update() {
+        KhoaHoc nh = getForm();        
+        try {
+            khDAO.update(nh);
+            fillTable();
+            MsgBox.alert(this, "Cập nhật thành công!");
+        } catch (Exception e) {
+            MsgBox.alert(this, "Cập nhật thất bại!");
+        }
+    }
+    
+    void delete() {
+        if (!Auth.isManager()) {
+            MsgBox.alert(this, "Bạn không có quyền xoá người học này!");
+        } else {
+            int id = Integer.parseInt(cboChuyenDe.getToolTipText());
+            if (MsgBox.confirm(this, "Bạn thực sự muốn xoá người học này?")){ 
+            try {
+            khDAO.delete(id);
+            this.fillTable();
+            this.clearForm();
+            MsgBox.alert(this, "Bạn xoá thành công!");
+            } catch (Exception e) {
+                MsgBox.alert(this, "Xoá thất bại!");
+                }
+            }
+        }
+    }
+    
+    void first() {
+        this.row = 0;
+        this.edit();
+    }
+
+    void prev() {
+        if (this.row > 0) {
+            this.row--;
+            this.edit();
+        }
+    }
+
+    void next() {
+        if (this.row < tblKhoaHoc.getRowCount() - 1) {
+            this.row++;
+            this.edit();
+        }
+    }
+
+    void last() {
+        this.row = tblKhoaHoc.getRowCount() - 1;
+        this.edit();
     }
 
     @SuppressWarnings("unchecked")
@@ -47,8 +279,6 @@ public class KhoaHocD extends javax.swing.JDialog{
 
         jTextField5.setText("jTextField3");
 
-        setResizable(true);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 0, 0));
         jLabel1.setText("CHUYÊN ĐỀ");
@@ -70,20 +300,60 @@ public class KhoaHocD extends javax.swing.JDialog{
         jLabel8.setText("Ghi chú");
 
         btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemActionPerformed(evt);
+            }
+        });
 
         btnSua.setText("Sửa");
+        btnSua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaActionPerformed(evt);
+            }
+        });
 
         btnXoa.setText("Xoá");
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaActionPerformed(evt);
+            }
+        });
 
         btnMoi.setText("Mới");
+        btnMoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoiActionPerformed(evt);
+            }
+        });
 
         btnFirst.setText("|<");
+        btnFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFirstActionPerformed(evt);
+            }
+        });
 
         btnPrev.setText("<<");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
 
         btnNext.setText(">>");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
 
         btnLast.setText(">|");
+        btnLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLastActionPerformed(evt);
+            }
+        });
 
         txtGhiChu.setColumns(20);
         txtGhiChu.setRows(5);
@@ -203,6 +473,11 @@ public class KhoaHocD extends javax.swing.JDialog{
                 return canEdit [columnIndex];
             }
         });
+        tblKhoaHoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblKhoaHocMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblKhoaHoc);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -252,6 +527,45 @@ public class KhoaHocD extends javax.swing.JDialog{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
+        insert();
+    }//GEN-LAST:event_btnThemActionPerformed
+
+    private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
+        update();
+    }//GEN-LAST:event_btnSuaActionPerformed
+
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
+        delete();
+    }//GEN-LAST:event_btnXoaActionPerformed
+
+    private void btnMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoiActionPerformed
+        clearForm();
+    }//GEN-LAST:event_btnMoiActionPerformed
+
+    private void btnFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFirstActionPerformed
+        first();
+    }//GEN-LAST:event_btnFirstActionPerformed
+
+    private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
+        prev();
+    }//GEN-LAST:event_btnPrevActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        next();
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void btnLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLastActionPerformed
+        last();
+    }//GEN-LAST:event_btnLastActionPerformed
+
+    private void tblKhoaHocMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblKhoaHocMousePressed
+        if(evt.getClickCount() == 2){
+            this.row =tblKhoaHoc.rowAtPoint(evt.getPoint());
+            edit();
+        }
+    }//GEN-LAST:event_tblKhoaHocMousePressed
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {
