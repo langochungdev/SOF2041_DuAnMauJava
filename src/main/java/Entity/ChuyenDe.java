@@ -7,17 +7,19 @@ public class ChuyenDe {
     private int thoiLuong;
     private String hinh;
     private String moTa;
+    private String doKho;
 
 
     public ChuyenDe() {
     }
-    public ChuyenDe(String maCD, String tenCD, double hocPhi, int thoiLuong, String hinh, String moTa) {
+    public ChuyenDe(String maCD, String tenCD, double hocPhi, int thoiLuong, String hinh, String moTa, String doKho) {
         this.maCD = maCD;
         this.tenCD = tenCD;
         this.hocPhi = hocPhi;
         this.thoiLuong = thoiLuong;
         this.hinh = hinh;
         this.moTa = moTa;
+        this.doKho = doKho;
     }
     public String getMaCD() {
         return maCD;
@@ -54,6 +56,12 @@ public class ChuyenDe {
     }
     public void setMoTa(String moTa) {
         this.moTa = moTa;
+    }
+    public String getDoKho() {
+        return doKho;
+    }
+    public void setDoKho(String doKho) {
+        this.doKho = doKho;
     }
     
     

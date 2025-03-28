@@ -104,13 +104,15 @@ public class EduSys extends javax.swing.JFrame {
     }
 
     //phần thống kê
-    public void openThongKeD() {
+    public void openThongKeD(int index) {
         if (Auth.isLogin()) {
             if (!Auth.isManager()) {
-                MsgBox.alert(this, "Bạn không có quyền xem doanh thu!");
+                MsgBox.alert(this, "Bạn không có quyền xem!");
                 return;
-            } else {
-                new ThongKeD(this, true).setVisible(true);
+            }else{
+                ThongKeD thongKe = new ThongKeD(this, true);
+                thongKe.selectTab(index); 
+                thongKe.setVisible(true);
             }
         } else {
             MsgBox.alert(this, "Vui lòng đăng nhập lại!");
@@ -597,15 +599,15 @@ public class EduSys extends javax.swing.JFrame {
     }
 
     private void mniBangDiemActionPerformed(java.awt.event.ActionEvent evt) {
-        openThongKeD();
+        openThongKeD(0);
     }
 
     private void mniDiemChuyenDeActionPerformed(java.awt.event.ActionEvent evt) {
-        openThongKeD();
+        openThongKeD(2);
     }
 
     private void mniDoanhThuActionPerformed(java.awt.event.ActionEvent evt) {
-        openThongKeD();
+        openThongKeD(3);
     }
 
     private void mniHuongDanActionPerformed(java.awt.event.ActionEvent evt) {
@@ -625,7 +627,7 @@ public class EduSys extends javax.swing.JFrame {
     }
 
     private void mniLuongNguoiHocActionPerformed(java.awt.event.ActionEvent evt) {
-        openThongKeD();
+        openThongKeD(1);
     }
     
     public static void main(String args[]) {

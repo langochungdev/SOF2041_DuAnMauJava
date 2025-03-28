@@ -13,13 +13,11 @@ CREATE TABLE NhanVien (
 
 CREATE TABLE ChuyenDe (
     MaCD nchar(5) NOT NULL PRIMARY KEY,
-    TenCD nvarchar(50) NOT NULL,
-    HocPhi float NOT NULL DEFAULT 0,
-    ThoiLuong int NOT NULL DEFAULT 30,
+    TenCD nvarchar(50) NOT NULL UNIQUE,
+    HocPhi float NOT NULL DEFAULT 0 CHECK (HocPhi >= 0),
+    ThoiLuong int NOT NULL DEFAULT 30 CHECK (ThoiLuong > 0),
     Hinh nvarchar(50) NOT NULL DEFAULT 'chuyen-de.png',
-    MoTa nvarchar(255) NOT NULL,
-    UNIQUE (TenCD),
-    CHECK (HocPhi >= 0 AND ThoiLuong > 0)
+    MoTa nvarchar(255) NOT NULL
 )
 
 CREATE TABLE NguoiHoc (
@@ -38,13 +36,12 @@ CREATE TABLE NguoiHoc (
 CREATE TABLE KhoaHoc (
     MaKH int IDENTITY(1,1) NOT NULL PRIMARY KEY,
     MaCD nchar(5) NOT NULL,
-    HocPhi float NOT NULL DEFAULT 0,
-    ThoiLuong int NOT NULL DEFAULT 0,
+    HocPhi float NOT NULL DEFAULT 0 CHECK (HocPhi >= 0),
+    ThoiLuong int NOT NULL DEFAULT 0 CHECK (ThoiLuong > 0),
     NgayKG date NOT NULL,
     GhiChu nvarchar(50) NULL,
     MaNV nvarchar(50) NOT NULL,
     NgayTao date NOT NULL DEFAULT GETDATE(),
-    CHECK (HocPhi >= 0 AND ThoiLuong > 0),
     FOREIGN KEY (MaCD) REFERENCES ChuyenDe(MaCD) ON UPDATE CASCADE,
     FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV) ON UPDATE CASCADE
 )
@@ -58,16 +55,17 @@ CREATE TABLE HocVien (
     FOREIGN KEY (MaKH) REFERENCES KhoaHoc(MaKH) ON DELETE CASCADE,
     FOREIGN KEY (MaNH) REFERENCES NguoiHoc(MaNH) ON UPDATE CASCADE
 )
-go
+GO
 
--- procedure
+-- PROCEDURE
 CREATE PROC sp_BangDiem(@MaKH INT)
 AS BEGIN
 	SELECT 
 		nh.MaNH,
 		nh.HoTen,
 		hv.Diem
-	FROM HocVien hv JOIN NguoiHoc nh ON nh.MaNH = hv.MaNH
+	FROM HocVien hv 
+	JOIN NguoiHoc nh ON nh.MaNH = hv.MaNH
 	WHERE hv.MaKH = @MaKH
 	ORDER BY hv.Diem DESC
 END
@@ -120,13 +118,12 @@ AS BEGIN
 	GROUP BY YEAR(NgayDK)
 END
 
-go 
+GO 
 
-
-
+-- DỮ LIỆU MẪU
 INSERT INTO NhanVien VALUES
-('hungln', '123', 'la ngoc hung', 1),
-('hunglnf', '123', 'la ngoc hung', 0)
+('hungln', '123', 'La Ngoc Hung 1', 1),
+('hunglnf', '123', 'La Ngoc Hung 2', 0)
 
 INSERT INTO ChuyenDe VALUES
 (N'JAV01', N'Lập trình Java cơ bản', 2500, 90, N'GAME.png', N'JAV01 - Lập trình Java cơ bản'),
@@ -135,38 +132,14 @@ INSERT INTO ChuyenDe VALUES
 (N'PRO01', N'Dự án với Swing & JDBC', 3000, 90, N'VBPR.png', N'PRO01 - Dự án với Swing & JDBC')
 
 INSERT INTO NguoiHoc VALUES
-(N'PY00060', N'Vũ Thị Hương', '2005-10-12', 0, N'0388928274', N'huongvt@fpt.edu.vn', N'0388928274 - Vũ Thị Hương', N'hungln', '2024-02-20'),
-(N'PY00061', N'Trần Đức Anh', '2005-08-15', 1, N'0388928197', N'anhtd@fpt.edu.vn', N'0388928197 - Trần Đức Anh', N'mainh', '2024-03-05'),
-(N'PY00062', N'Huỳnh Minh Tuấn', '2005-11-25', 1,  N'0388928311', N'tuanhm@fpt.edu.vn', N'0388928311 - Huỳnh Minh Tuấn', N'hungln', '2024-04-10'),
-(N'PY00063', N'Phạm Thị Hằng', '2005-09-01', 0, N'0388928357', N'hangpt@fpt.edu.vn', N'0388928357 - Phạm Thị Hằng', N'hungln', '2024-06-10'),
-(N'PY00064', N'Trần Văn Khải', '2005-07-12', 1, N'0388928496', N'khaitv@fpt.edu.vn', N'0388928496 - Trần Văn Khải', N'hungln', '2024-06-15'),
-(N'PY00065', N'Hoàng Thị Ái', '2005-12-20', 0, N'0388928224', N'aiht@fpt.edu.vn', N'0388928224 - Hoàng Thị Ái', N'hungln', '2024-06-20'),
-(N'PY00031', N'Đỗ Ngọc Linh', '2005-04-12', 0, N'0388928437', N'linhdnpy00031@fpt.edu.vn', N'0388928437 - Đỗ Ngọc Linh', N'hungln', '2024-06-05'),
-(N'PY00055', N'Nguyễn Thị Sáu','2005-12-05', 0, N'0388928867', N'sauntpy00055@fpt.edu.vn', N'0388928867 - Nguyễn Thị Sáu', N'hungln','2024-11-20'),
-(N'PY00025', N'Huỳnh Phúc Khang','2005-09-15' , 1, N'0388928246', N'khanghppy00025@fpt.edu.vn', N'0388928246 - Huỳnh Phúc Khang', N'hungln','2024-03-13'),
-(N'PY00028', N'Nguyễn Thuỳ Linh','2005-07-17', 0, N'0388928368', N'linhntpy00028@fpt.edu.vn', N'0388928368 - Nguyễn Thuỳ Linh', N'hungln','2024-01-16'),
-(N'PY00056', N'Tô Lâm', '2005-09-21', 1, N'0388928689', N'lamtpy00056@fpt.edu.vn', N'0388928689 - Tô Lâm', N'hungln','2024-10-19')
+(N'PY00060', N'La Ngoc Hung 3', '2005-10-12', 0, N'0388928274', N'hung3@fpt.edu.vn', N'0388928274 - La Ngoc Hung 3', N'hungln', '2024-02-20'),
+(N'PY00061', N'La Ngoc Hung 4', '2005-08-15', 1, N'0388928197', N'hung4@fpt.edu.vn', N'0388928197 - La Ngoc Hung 4', N'mainh', '2024-03-05'),
+(N'PY00062', N'La Ngoc Hung 5', '2005-11-25', 1,  N'0388928311', N'hung5@fpt.edu.vn', N'0388928311 - La Ngoc Hung 5', N'hungln', '2024-04-10')
 
 INSERT INTO KhoaHoc VALUES
 (N'JAV01', 2500, 90, '2024-09-05', N'Lập trình Java cơ bản', N'hungln', '2024-09-06'),
-(N'JAV02', 3000, 90, '2024-11-06', N'Lập trình Java nâng cao', N'hungln', '2024-11-16'),
-(N'WEB01', 2000, 70, '2024-10-12', N'Thiết kế web với HTML và CSS', N'hungln', '2024-10-13'),
-(N'PRO01', 3000, 90, '2024-12-05', N'Lập trình Java cơ bản', N'hungln', '2024-12-06'),
-(N'JAV01', 2500, 90, '2024-08-10', N'Lập trình Java cơ bản', N'hungln', '2024-08-11'),
-(N'JAV02', 3000, 90, '2024-10-05', N'Lập trình Java nâng cao', N'hungln', '2024-10-06'),
-(N'WEB01', 2000, 70, '2024-11-05', N'Thiết kế web với HTML và CSS', N'hungln', '2024-11-06'),
-(N'JAV01', 2500, 90, '2024-11-11', N'Lập trình Java cơ bản', N'hungln', '2024-11-16')
+(N'JAV02', 3000, 90, '2024-11-06', N'Lập trình Java nâng cao', N'hungln', '2024-11-16')
 
 INSERT INTO HocVien VALUES
 (1, N'PY00060', 8),
-(2, N'PY00061', 8),
-(3, N'PY00062', 9),
-(4, N'PY00063', 6),
-(5, N'PY00064', 7),
-(6, N'PY00065', 5),
-(8, N'PY00031', 8),
-(1, N'PY00055', 9),
-(2, N'PY00025', 5),
-(3, N'PY00028', 9),
-(4, N'PY00056', 8)
-
+(2, N'PY00061', 8)

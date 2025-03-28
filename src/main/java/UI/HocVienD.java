@@ -11,6 +11,8 @@ import Utils.Auth;
 import Utils.MsgBox;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 public class HocVienD extends javax.swing.JDialog{
@@ -25,6 +27,26 @@ public class HocVienD extends javax.swing.JDialog{
         setTitle("Học viên");
         setLocationRelativeTo(null);
         fillcbbChuyenDe();
+        autoSearch();
+    }
+    
+    void autoSearch(){
+        txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filltbNguoiHoc();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filltbNguoiHoc();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filltbNguoiHoc();
+            }
+        });
     }
     
     void fillcbbChuyenDe(){
@@ -109,18 +131,26 @@ public class HocVienD extends javax.swing.JDialog{
         }
     }
     
-    void addHocVien(){
-        KhoaHoc kh = (KhoaHoc)cboKhoaHoc.getSelectedItem();
-        for(int row : tblNguoiHoc.getSelectedRows()){
+    void addHocVien() {
+    KhoaHoc kh = (KhoaHoc) cboKhoaHoc.getSelectedItem();
+    for (int row : tblNguoiHoc.getSelectedRows()) {
+        String maNH = (String) tblNguoiHoc.getValueAt(row, 0);
+
+        // Kiểm tra nếu học viên đã tồn tại trong khóa học
+        if (!hvDAO.exists(kh.getMaKH(), maNH)) {
             HocVien hv = new HocVien();
             hv.setMaKH(kh.getMaKH());
             hv.setDiem(0);
-            hv.setMaNH((String)tblNguoiHoc.getValueAt(row, 0));
+            hv.setMaNH(maNH);
             hvDAO.insert(hv);
+        } else {
+            System.out.println("Học viên " + maNH + " đã tồn tại trong khóa học!");
         }
-        filltbHocVien();
-        tabs.setSelectedIndex(0);
     }
+    filltbHocVien();
+    tabs.setSelectedIndex(0);
+}
+
     
     void removeHocVien(){
         if(!Auth.isManager()){

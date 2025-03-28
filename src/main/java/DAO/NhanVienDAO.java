@@ -7,25 +7,30 @@ import java.util.List;
 
 public class NhanVienDAO extends EduSysDAO<NhanVien, String>{
     String INSERT_SQL = "insert into NhanVien values (?, ?, ?, ?)";
-    String UPDATE_SQL = "update NhanVien set MatKhau=?, HoTen=?, VaiTro=? where MaNV=?";
+    String UPDATE_SQL = "update NhanVien set MatKhau=?, HoTen=?, VaiTro=?, GioiTinh=? where MaNV=?";
     String DELETE_SQL = "delete from NhanVien where MaNV=?";
     String SELECT_ALL_SQL = "select*from NhanVien";
     String SELECT_BY_ID_SQL = "select*from NhanVien where MaNV=?";
-    
+
+
     @Override
     public void insert(NhanVien e){
-        JdbcHelper.execUpdate(INSERT_SQL, e.getMaNV(),
+        JdbcHelper.execUpdate(INSERT_SQL, 
                 e.getMatKhau(),
                 e.getHoTen(),
-                e.isVaiTro());
+                e.isVaiTro(),
+                e.getGioiTinh(),
+                e.getMaNV());
     }
 
     @Override
     public void update(NhanVien e){
-        JdbcHelper.execUpdate(UPDATE_SQL, e.getMaNV(),
+        JdbcHelper.execUpdate(UPDATE_SQL, 
                 e.getMatKhau(),
                 e.getHoTen(),
-                e.isVaiTro());
+                e.isVaiTro(),
+                e.getGioiTinh(),
+                e.getMaNV());
     }
 
     @Override
@@ -58,6 +63,8 @@ public class NhanVienDAO extends EduSysDAO<NhanVien, String>{
                 e.setMatKhau(rs.getString("MatKhau"));
                 e.setHoTen(rs.getString("HoTen"));
                 e.setVaiTro(rs.getBoolean("VaiTro"));
+                e.setMail(rs.getString("Mail"));
+                e.setGioiTinh(rs.getString("GioiTinh"));
                 ds.add(e);
             }
         }catch(Exception e){
@@ -65,5 +72,5 @@ public class NhanVienDAO extends EduSysDAO<NhanVien, String>{
         };
         return ds;
     }
-    
+
 }

@@ -40,7 +40,8 @@ public class ChuyenDeD extends javax.swing.JDialog{
                         cd.getTenCD(),
                         cd.getHocPhi(),
                         cd.getThoiLuong(),
-                        cd.getHinh()
+                        cd.getHinh(),
+                        cd.getDoKho()
                 };
                 model.addRow(row);
             }
@@ -65,6 +66,7 @@ public class ChuyenDeD extends javax.swing.JDialog{
         txtGio.setText(String.valueOf(model.getThoiLuong()));
         txtHocPhi.setText(String.valueOf(model.getHocPhi()));
         txtMoTa.setText(model.getMoTa());
+        txtDoKho.setText(model.getDoKho());
         String hinh = model.getHinh();
         if (hinh != null && !hinh.isEmpty()) {
             lbLogo.setToolTipText(model.getHinh());
@@ -84,6 +86,7 @@ public class ChuyenDeD extends javax.swing.JDialog{
         cd.setHocPhi(Double.parseDouble(txtHocPhi.getText()));
         cd.setMoTa(txtMoTa.getText());
         cd.setHinh(lbLogo.getToolTipText());
+        cd.setDoKho(txtDoKho.getText());
         return cd;
     }
 
@@ -163,7 +166,7 @@ public class ChuyenDeD extends javax.swing.JDialog{
             }
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -192,6 +195,8 @@ public class ChuyenDeD extends javax.swing.JDialog{
         jScrollPane5 = new javax.swing.JScrollPane();
         txtMoTa = new javax.swing.JTextArea();
         lbLogo = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        txtDoKho = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDanhSach = new javax.swing.JTable();
@@ -283,6 +288,8 @@ public class ChuyenDeD extends javax.swing.JDialog{
             }
         });
 
+        jLabel2.setText("Độ khó");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -309,7 +316,9 @@ public class ChuyenDeD extends javax.swing.JDialog{
                                     .addComponent(jLabel24)
                                     .addComponent(jLabel23)
                                     .addComponent(jLabel22)
-                                    .addComponent(jLabel21))
+                                    .addComponent(jLabel21)
+                                    .addComponent(jLabel2)
+                                    .addComponent(txtDoKho, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -339,6 +348,10 @@ public class ChuyenDeD extends javax.swing.JDialog{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(lbLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel25))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(txtMa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel22)
@@ -351,10 +364,11 @@ public class ChuyenDeD extends javax.swing.JDialog{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel24)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtHocPhi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lbLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel25)
+                        .addComponent(txtHocPhi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDoKho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -379,11 +393,11 @@ public class ChuyenDeD extends javax.swing.JDialog{
 
             },
             new String [] {
-                "Mã CD", "Tên CD", "Học Phí", "Thời lượng", "Hình"
+                "Mã CD", "Tên CD", "Học Phí", "Thời lượng", "Hình", "DoKho"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -518,6 +532,7 @@ public class ChuyenDeD extends javax.swing.JDialog{
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnXoa;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
@@ -531,6 +546,7 @@ public class ChuyenDeD extends javax.swing.JDialog{
     private javax.swing.JLabel lbLogo;
     private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tbDanhSach;
+    private javax.swing.JTextField txtDoKho;
     private javax.swing.JTextField txtGio;
     private javax.swing.JTextField txtHocPhi;
     private javax.swing.JTextField txtMa;

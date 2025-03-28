@@ -7,44 +7,102 @@ import Utils.MsgBox;
 import Utils.Xdate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
-public class NguoiHocD extends javax.swing.JDialog{
+public class NguoiHocD extends javax.swing.JDialog {
 
-    public NguoiHocD(java.awt.Frame parent, boolean modal){
+    public NguoiHocD(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setTitle("Người học");
         setLocationRelativeTo(null);
-        fillTable();
+        fillTable(null);
         updateStatus();
+        autoSearch();
+    }
+
+    void autoSearch() {
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                search();
+            }
+        });
+
     }
 
     NguoiHocDAO nhdao = new NguoiHocDAO();
     int row = -1;
 
-    void fillTable() {
+//    void fillTable() {
+//        DefaultTableModel model = (DefaultTableModel) tblNguoiHoc.getModel();
+//        model.setRowCount(0);
+//        try {
+//            String keyword = txtSearch.getText();
+//            List<NguoiHoc> list = nhdao.selectByKeyword(keyword);
+//            for (NguoiHoc nh : list) {
+//                Object[] rows = {nh.getMaNH(),
+//                    nh.getHoTen(),
+//                    nh.isGioiTinh() ? "Male" : "Female",
+//                    Xdate.toString(nh.getNgaySinh(), "dd-MM-yyyy"),
+//                    nh.getDienThoai(),
+//                    nh.getEmail(),
+//                    nh.getMaNV(),
+//                    nh.getNgayDK()};
+//                model.addRow(rows);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+    void fillTable(String sortType) {
         DefaultTableModel model = (DefaultTableModel) tblNguoiHoc.getModel();
         model.setRowCount(0);
         try {
-            String keyword = txtTimKiem.getText();
+            String keyword = txtSearch.getText();
             List<NguoiHoc> list = nhdao.selectByKeyword(keyword);
+
+            if ("name".equals(sortType)) {
+//            list.sort(Comparator.comparing(nh -> nh.getHoTen().toLowerCase()));//.reversed());
+                list.sort(Comparator.comparing(nh -> getFirstName(nh.getHoTen()).toLowerCase()));
+            } else if ("maNH".equals(sortType)) {
+                list.sort(Comparator.comparing(nh -> nh.getMaNH().toLowerCase()));
+            }
+
             for (NguoiHoc nh : list) {
-                Object[] rows = { nh.getMaNH(),
-                        nh.getHoTen(),
-                        nh.isGioiTinh() ? "Male" : "Female",
-                        Xdate.toString(nh.getNgaySinh(), "dd-MM-yyyy"),
-                        nh.getDienThoai(),
-                        nh.getEmail(),
-                        nh.getMaNV(),
-                        nh.getNgayDK()};
+                Object[] rows = {nh.getMaNH(),
+                    nh.getHoTen(),
+                    nh.isGioiTinh() ? "Male" : "Female",
+                    Xdate.toString(nh.getNgaySinh(), "dd-MM-yyyy"),
+                    nh.getDienThoai(),
+                    nh.getEmail(),
+                    nh.getMaNV(),
+                    nh.getNgayDK()};
                 model.addRow(rows);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String getFirstName(String fullName) {
+        String[] parts = fullName.trim().split("\\s+");
+        return parts[parts.length - 1];
     }
 
     void edit() {
@@ -122,26 +180,26 @@ public class NguoiHocD extends javax.swing.JDialog{
 
     void insert() {
         NguoiHoc nh = getForm();
-        
+
         if (nh.getHoTen().length() > 35) {
-        MsgBox.alert(this, "Họ tên phải dưới 35 kí tự!");
-        return;
-    }
-        
-    if (!nh.getEmail().matches("^[\\w!#$%&'*+/=?^`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^`{|}~-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$")) {
-        MsgBox.alert(this, "Email không hợp lệ!");
-        return;
-    }
-        
+            MsgBox.alert(this, "Họ tên phải dưới 35 kí tự!");
+            return;
+        }
+
+        if (!nh.getEmail().matches("^[\\w!#$%&'*+/=?^`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^`{|}~-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$")) {
+            MsgBox.alert(this, "Email không hợp lệ!");
+            return;
+        }
+
         NguoiHoc nhCheck = nhdao.selectById(nh.getMaNH());
         if (nhCheck != null) {
-        MsgBox.alert(this, "Mã người học đã tồn tại!");
-        return;
-    }
-        
+            MsgBox.alert(this, "Mã người học đã tồn tại!");
+            return;
+        }
+
         try {
             nhdao.insert(nh);
-            fillTable();
+            fillTable(null);
             clearForm();
             MsgBox.alert(this, "Thêm mới thành công!");
         } catch (Exception e) {
@@ -151,26 +209,26 @@ public class NguoiHocD extends javax.swing.JDialog{
 
     void update() {
         NguoiHoc nh = getForm();
-        
+
         if (nh.getHoTen().length() > 35) {
-        MsgBox.alert(this, "Họ tên phải dưới 35 kí tự!");
-        return;
-    }
-        
-    if (!nh.getEmail().matches("^[\\w!#$%&'*+/=?^`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^`{|}~-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$")) {
-        MsgBox.alert(this, "Email không hợp lệ!");
-        return;
-    }
-        
+            MsgBox.alert(this, "Họ tên phải dưới 35 kí tự!");
+            return;
+        }
+
+        if (!nh.getEmail().matches("^[\\w!#$%&'*+/=?^`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^`{|}~-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$")) {
+            MsgBox.alert(this, "Email không hợp lệ!");
+            return;
+        }
+
         NguoiHoc nhCheck = nhdao.selectById(nh.getMaNH());
         if (nhCheck != null) {
-        MsgBox.alert(this, "Mã người học đã tồn tại!");
-        return;
-    }
-        
+            MsgBox.alert(this, "Mã người học đã tồn tại!");
+            return;
+        }
+
         try {
             nhdao.update(nh);
-            fillTable();
+            fillTable(null);
             MsgBox.alert(this, "Cập nhật thành công!");
         } catch (Exception e) {
             MsgBox.alert(this, "Cập nhật thất bại!");
@@ -185,7 +243,7 @@ public class NguoiHocD extends javax.swing.JDialog{
             if (MsgBox.confirm(this, "Bạn thực sự muốn xoá người học này?")) {
                 try {
                     nhdao.delete(manh);
-                    this.fillTable();
+                    this.fillTable(null);
                     this.clearForm();
                     MsgBox.alert(this, "Bạn xoá thành công!");
                 } catch (Exception e) {
@@ -197,7 +255,7 @@ public class NguoiHocD extends javax.swing.JDialog{
     }
 
     void search() {
-        fillTable();
+        fillTable(null);
         clearForm();
         row = -1;
         updateStatus();
@@ -226,15 +284,13 @@ public class NguoiHocD extends javax.swing.JDialog{
         this.row = tblNguoiHoc.getRowCount() - 1;
         this.edit();
     }
-    
-    private void fillFind(){
-        this.fillTable();
+
+    private void fillFind() {
+        this.fillTable(null);
         this.clearForm();
         this.row = -1;
         updateStatus();
     }
-
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -272,10 +328,11 @@ public class NguoiHocD extends javax.swing.JDialog{
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        txtTimKiem = new javax.swing.JTextField();
-        btnTim = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblNguoiHoc = new javax.swing.JTable();
+        btnSortByTen = new javax.swing.JButton();
+        btnSortByMaNH = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(51, 51, 255));
@@ -483,10 +540,9 @@ public class NguoiHocD extends javax.swing.JDialog{
 
         jLabel2.setText("Tìm kiếm");
 
-        btnTim.setText("Tìm");
-        btnTim.addActionListener(new java.awt.event.ActionListener() {
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTimActionPerformed(evt);
+                txtSearchActionPerformed(evt);
             }
         });
 
@@ -513,19 +569,37 @@ public class NguoiHocD extends javax.swing.JDialog{
         });
         jScrollPane1.setViewportView(tblNguoiHoc);
 
+        btnSortByTen.setText("sortByTen");
+        btnSortByTen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSortByTenActionPerformed(evt);
+            }
+        });
+
+        btnSortByMaNH.setText("sortByMaNH");
+        btnSortByMaNH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSortByMaNHActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 786, Short.MAX_VALUE)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtTimKiem)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnTim, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jLabel2)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtSearch)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnSortByMaNH)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSortByTen))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -533,12 +607,14 @@ public class NguoiHocD extends javax.swing.JDialog{
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTim))
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSortByTen)
+                    .addComponent(btnSortByMaNH))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -554,8 +630,8 @@ public class NguoiHocD extends javax.swing.JDialog{
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         tabs.addTab("DANH SÁCH", jPanel2);
@@ -587,8 +663,8 @@ public class NguoiHocD extends javax.swing.JDialog{
     }// </editor-fold>//GEN-END:initComponents
 
     private void tblNguoiHocMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblNguoiHocMousePressed
-        if(evt.getClickCount() == 2){
-            this.row =tblNguoiHoc.rowAtPoint(evt.getPoint());
+        if (evt.getClickCount() == 2) {
+            this.row = tblNguoiHoc.rowAtPoint(evt.getPoint());
             edit();
         }
     }//GEN-LAST:event_tblNguoiHocMousePressed
@@ -625,14 +701,20 @@ public class NguoiHocD extends javax.swing.JDialog{
         last();
     }//GEN-LAST:event_btnLastActionPerformed
 
-    private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
-        search();
-        fillFind();
-    }//GEN-LAST:event_btnTimActionPerformed
-    
-    
-    public static void main(String args[]){
-        java.awt.EventQueue.invokeLater(new Runnable(){
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+
+    }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void btnSortByMaNHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSortByMaNHActionPerformed
+        fillTable("maNH");
+    }//GEN-LAST:event_btnSortByMaNHActionPerformed
+
+    private void btnSortByTenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSortByTenActionPerformed
+        fillTable("name");
+    }//GEN-LAST:event_btnSortByTenActionPerformed
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 NguoiHocD dialog = new NguoiHocD(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -652,9 +734,10 @@ public class NguoiHocD extends javax.swing.JDialog{
     private javax.swing.JButton btnMoi;
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
+    private javax.swing.JButton btnSortByMaNH;
+    private javax.swing.JButton btnSortByTen;
     private javax.swing.JButton btnSua;
     private javax.swing.JButton btnThem;
-    private javax.swing.JButton btnTim;
     private javax.swing.JButton btnXoa;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
@@ -682,6 +765,6 @@ public class NguoiHocD extends javax.swing.JDialog{
     private javax.swing.JTextField txtHoTen;
     private javax.swing.JTextField txtMaNH;
     private javax.swing.JTextField txtNgaySinh;
-    private javax.swing.JTextField txtTimKiem;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

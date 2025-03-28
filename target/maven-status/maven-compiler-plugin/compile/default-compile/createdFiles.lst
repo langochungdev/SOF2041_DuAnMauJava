@@ -1,7 +1,7 @@
 UI\NhanVienD$8.class
 UI\HocVienD$2.class
 DAO\KhoaHocDAO.class
-UI\KhoaHocD$11$1.class
+UI\NguoiHocD$15.class
 UI\EduSys$1.class
 UI\EduSys$24.class
 UI\EduSys$11.class
@@ -28,13 +28,14 @@ UI\HocVienD$7.class
 UI\HocVienD$1.class
 UI\ChaoD.class
 UI\ChuyenDeD$9.class
-UI\TestDemo.class
 UI\NguoiHocD$5.class
 UI\NhanVienD$2.class
 DAO\NguoiHocDAO.class
 UI\DoiMatKhauD$3.class
 UI\NhanVienD$9.class
 UI\ThongKeD$1.class
+Utils\MailSender$1.class
+UI\NhanVienD$11$1.class
 UI\ChuyenDeD$3.class
 UI\ChaoD$1.class
 Entity\ChuyenDe.class
@@ -44,12 +45,14 @@ UI\ThongKeD$2.class
 UI\DangNhapD$1.class
 UI\ChuyenDeD$7.class
 UI\ThongKeD$7$1.class
+Utils\MailSender.class
 UI\NguoiHocD$3.class
+UI\DangNhapD$4.class
 UI\ThongKeD$5.class
 UI\ChuyenDeD$4.class
 UI\NhanVienD$1.class
+UI\HocVienD$9.class
 UI\EduSys$12.class
-UI\NguoiHocD$12$1.class
 UI\EduSys$3.class
 Utils\Xdate.class
 DAO\NhanVienDAO.class
@@ -63,9 +66,12 @@ DAO\ThongKeDAO.class
 UI\EduSys$10.class
 UI\ThongKeD.class
 UI\KhoaHocD$9.class
+UI\DangNhapD$4$1.class
 UI\DangNhapD$3.class
 UI\ThongKeD$4.class
+UI\NguoiHocD$15$1.class
 UI\HocVienD.class
+UI\HocVienD$9$1.class
 UI\NguoiHocD$7.class
 Utils\MsgBox.class
 UI\EduSys$4.class
@@ -78,7 +84,6 @@ UI\DangNhapD.class
 UI\DoiMatKhauD.class
 UI\ThongKeD$3.class
 UI\KhoaHocD$1.class
-UI\DangNhapD$3$1.class
 UI\NguoiHocD$1.class
 UI\ChuyenDeD$10.class
 UI\ChuyenDeD$5.class
@@ -87,6 +92,7 @@ DAO\HocVienDAO.class
 UI\NguoiHocD$12.class
 Utils\JdbcHelper.class
 Utils\Auth.class
+UI\KhoaHocD$12$1.class
 UI\GioiThieuD$1$1.class
 UI\EduSys$13.class
 UI\EduSys$19.class
@@ -95,6 +101,7 @@ UI\NguoiHocD$11.class
 Entity\KhoaHoc.class
 UI\NguoiHocD$6.class
 UI\EduSys$5.class
+UI\KhoaHocD$12.class
 UI\EduSys$18.class
 Utils\XImage.class
 UI\HocVienD$6.class
@@ -108,12 +115,12 @@ UI\KhoaHocD$10.class
 UI\ChuyenDeD$12$1.class
 UI\NhanVienD$7.class
 UI\HocVienD$3.class
-UI\NhanVienD$10$1.class
 UI\NhanVienD$4.class
 UI\EduSys$23.class
 UI\EduSys$15.class
 UI\EduSys$16.class
 UI\NhanVienD$10.class
+UI\NguoiHocD$13.class
 UI\EduSys$9.class
 UI\NguoiHocD$8.class
 UI\NhanVienD.class
@@ -123,6 +130,8 @@ UI\HocVienD$4.class
 UI\NhanVienD$6.class
 UI\EduSys$17.class
 UI\ChuyenDeD$11.class
+UI\NguoiHocD$14.class
+UI\NhanVienD$11.class
 UI\NguoiHocD$9.class
 UI\ChuyenDeD.class
 UI\EduSys$22.class
@@ -130,4 +139,3 @@ UI\KhoaHocD$2.class
 UI\NhanVienD$5.class
 UI\EduSys$8.class
 UI\HocVienD$5.class
-UI\HocVienD$8$1.class

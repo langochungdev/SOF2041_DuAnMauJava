@@ -7,8 +7,8 @@ import java.util.List;
 import Utils.JdbcHelper;
 
 public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
-    String INSERT_SQL = "INSERT INTO ChuyenDe (MaCD, TenCD, HocPhi, ThoiLuong, Hinh, MoTa) VALUES (?, ?, ?, ?, ?, ?)";
-    String UPDATE_SQL = "UPDATE ChuyenDe SET TenCD=?, HocPhi=?, ThoiLuong=?, Hinh=?, MoTa=? WHERE MaCD=?";
+    String INSERT_SQL = "INSERT INTO ChuyenDe (MaCD, TenCD, HocPhi, ThoiLuong, Hinh, MoTa, DoKho) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String UPDATE_SQL = "UPDATE ChuyenDe SET TenCD=?, HocPhi=?, ThoiLuong=?, Hinh=?, MoTa=?, DoKho=? WHERE MaCD=?";
     String DELETE_SQL = "DELETE FROM ChuyenDe WHERE MaCD=?";
     String SELECT_ALL_SQL = "SELECT * FROM ChuyenDe";
     String SELECT_BY_ID_SQL = "SELECT * FROM ChuyenDe WHERE MaCD=?";
@@ -21,7 +21,8 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
                 e.getHocPhi(),
                 e.getThoiLuong(),
                 e.getHinh(),
-                e.getMoTa());
+                e.getMoTa(),
+                e.getDoKho());
     }
 
     @Override
@@ -32,6 +33,7 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
                 e.getThoiLuong(),
                 e.getHinh(),
                 e.getMoTa(),
+                e.getDoKho(),
                 e.getMaCD());
     }
 
@@ -67,6 +69,7 @@ public class ChuyenDeDAO extends EduSysDAO<ChuyenDe, String> {
                 e.setThoiLuong(rs.getInt("ThoiLuong"));
                 e.setHinh(rs.getString("Hinh"));
                 e.setMoTa(rs.getString("MoTa"));
+                e.setDoKho(rs.getString("DoKho"));
                 ds.add(e);
             }
             return ds;

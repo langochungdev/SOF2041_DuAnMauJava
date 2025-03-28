@@ -283,6 +283,12 @@ public class KhoaHocD extends javax.swing.JDialog{
         jLabel1.setForeground(new java.awt.Color(255, 0, 0));
         jLabel1.setText("CHUYÊN ĐỀ");
 
+        cboChuyenDe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboChuyenDeActionPerformed(evt);
+            }
+        });
+
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel2.setText("Chuyên đề");
@@ -566,6 +572,10 @@ public class KhoaHocD extends javax.swing.JDialog{
             edit();
         }
     }//GEN-LAST:event_tblKhoaHocMousePressed
+
+    private void cboChuyenDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboChuyenDeActionPerformed
+        chonChuyenDe();
+    }//GEN-LAST:event_cboChuyenDeActionPerformed
     public static void main(String args[]){
         java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {

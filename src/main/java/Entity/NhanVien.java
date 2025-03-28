@@ -5,14 +5,18 @@ public class NhanVien {
     private String hoTen;
     private String matKhau;
     private boolean vaiTro;
+    private String mail;
+    private String gioiTinh;
 
     public NhanVien(){
     }
-    public NhanVien(String maNV, String matKhau, String hoTen, boolean vaiTro) {
+    public NhanVien(String maNV, String matKhau, String hoTen, boolean vaiTro, String mail, String gioiTinh){
         this.maNV = maNV;
         this.hoTen = hoTen;
         this.matKhau = matKhau;
         this.vaiTro = vaiTro;
+        this.mail = mail;
+        this.gioiTinh = gioiTinh;
     }
     public String getMaNV() {
         return maNV;
@@ -37,6 +41,19 @@ public class NhanVien {
     }
     public void setVaiTro(boolean vaiTro) {
         this.vaiTro = vaiTro;
+    }
+    public String getMail(){
+        return mail;
+    }
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+    
+    public String getGioiTinh(){
+        return gioiTinh;
+    }
+    public void setGioiTinh(String gioiTinh) {
+        this.gioiTinh = gioiTinh;
     }
 
     @Override

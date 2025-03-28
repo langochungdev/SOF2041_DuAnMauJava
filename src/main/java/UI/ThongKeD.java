@@ -111,6 +111,10 @@ public class ThongKeD extends javax.swing.JDialog{
             System.out.println("Chưa chọn năm hoặc giá trị không hợp lệ!");
         }
     }
+    
+    public void selectTab(int index) {
+        tabs.setSelectedIndex(index);
+    }
 
 
     @SuppressWarnings("unchecked")
@@ -324,7 +328,7 @@ public class ThongKeD extends javax.swing.JDialog{
                     .addComponent(jLabel3)
                     .addComponent(cboNam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

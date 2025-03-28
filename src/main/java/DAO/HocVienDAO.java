@@ -72,4 +72,17 @@ public class HocVienDAO extends EduSysDAO<HocVien, Integer> {
         String SQL = "SELECT * FROM HocVien WHERE MaKH = ?";
         return this.selectBySql(SQL, makh);
     }
+    
+    public boolean exists(int maKH, String maNH) {
+    String sql = "SELECT COUNT(*) FROM HocVien WHERE MaKH = ? AND MaNH = ?";
+    try {
+        ResultSet rs = JdbcHelper.execQuery(sql, maKH, maNH);
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    return false;
+}
 }
